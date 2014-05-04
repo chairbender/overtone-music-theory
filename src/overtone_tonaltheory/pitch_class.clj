@@ -26,6 +26,21 @@
 	[pitch-class]
 	(keyword (str (first (name pitch-class)))))
 
+(defn sharpen
+	"Adds the passed number of sharps to the passed
+	pitch class keyword and returns that as a new keyword.
+	If nil is passed for num-sharps, returns the pitch-class unmodified."
+	[pitch-class num-sharps]
+	(if (nil? num-sharps)
+		pitch-class
+		(keyword
+		 (apply str
+			(flatten
+			 	[(name pitch-class)
+				(vec (for [i (range num-sharps)]
+					"#"))])))
+		))
+
 
 (defn next-natural-pitch-class
 	"Returns the 'natural' pitch class that is one higher

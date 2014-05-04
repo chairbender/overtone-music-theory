@@ -45,5 +45,3 @@
 					(frequencies (conj result-map-vector next-sharp))
 					(recur (inc next-sharp-index) (conj result-map-vector next-sharp))
 					)))))
-(last-sharp? :D :F (hash-map))
-(sharps-in-signature :D)
