@@ -37,25 +37,6 @@
 ;The number of semitones above which intervals will be treated as compound intervals.
 (def ^{:private true} compound-interval-cutoff 16)
 
-(defn- midi->semitones
-  "Converts a midi note to a value representing the number of semitones from C-1.
-  For example :A-1 is 0 and :C-1 is 3."
-  [note]
-  (if (contains? #{:A :Bb :B} ((overtone/note-info note) :pitch-class))
-    (- (overtone/note note) 9)
-    (+ (overtone/note note) 3)))
-(defn- semitones->midi
-  "Converts a value representing the number of semitones from C-1 to a midi note value.
-  Reverse of midi->semitones"
-  [semitones]
-  (if (contains? #{0 1 2} (mod semitones 12))
-    (+ semitones 9)
-    (- semitones 3)))
-
-(defn- interval-distance
-  "Returns the absolute distance in semitones between two midi notes"
-  [note otherNote]
-  (math/abs (- (midi->semitones note) (midi->semitones otherNote))))
 
 (defn interval-keywords
   "Returns a vector containing sets of the keywords that represent the interval between the two notes.
@@ -84,13 +65,6 @@
         (conj resultVector (get intervals-by-enharmonic semitonesLeft))
         (recur (conj resultVector (get intervals-by-enharmonic 12)) (- semitonesLeft 12))))))
 
-(defn interval-keyword-scale
-	"Returns the keyword representing the interval between the two notes")
-
-(defn- interval-semitones
-	"Returns the number of semitones in the given interval (keyword) spans."
-	[interval]
-	(intervals-to-semitones interval))
 
 (defn- note-interval
 	"Returns the midi note that is the given interval away from the midi note.
