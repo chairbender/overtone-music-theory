@@ -14,3 +14,11 @@
 						 (sharps-in-signature :B#) => (hash-map :F 2 :C 2 :G 2 :D 2 :A 2 :E 1 :B 1)
 						 ))
 
+(facts "about `flats-in-signature`"
+			 (fact "Returns a map from a pitch-class to the number of flats of that pitch-class
+						 in the key signature for the diatonic collection starting on diatonic-root."
+						 (flats-in-signature :C) => (hash-map)
+						 (flats-in-signature :F) => (hash-map :B 1)
+						 (flats-in-signature :B) => (hash-map :B 1 :E 1)
+						 (flats-in-signature :Fb) => (hash-map :B 2 :E 1 :A 1 :D 1 :G 1 :C 1 :F 1)
+						 ))

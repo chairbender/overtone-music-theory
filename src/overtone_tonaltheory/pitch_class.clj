@@ -21,25 +21,58 @@
 		(get circle-of-sharps (mod n (count circle-of-sharps)))
 		(get circle-of-sharps n)))
 
+(defn nth-flat-in-key-signature
+	"Returns the sharp that would appear as the nth sharp in a key signature, where
+	0 means the first sharp.
+	N must be 13 or less."
+	[n]
+	(if (>= n (count circle-of-flats))
+		 (get circle-of-flats (mod n (count circle-of-flats)))
+		 (get circle-of-flats n)))
+
+(def ^{:private true} previous-flat-in-circle-map
+	(hash-map :F :C :C :G :G :D :D :A :A :E :E :B :B :F))
+(defn previous-flat-in-circle
+	"Returns the pitch-class of the flat that comes before the given
+	flat in the circle of flats."
+	[pitch-class]
+	(previous-flat-in-circle-map pitch-class))
+
 (defn natural
 	"Returns the passed keyword but with any accidental removed."
 	[pitch-class]
 	(keyword (str (first (name pitch-class)))))
+
+(defn- accidentalify
+	"Adds the passed number of accidentals to the passed
+	pitch class keyword and returns that as a new keyword.
+	If nil is passed for num-accidentals, returns the pitch-class unmodified."
+	[pitch-class num-accidentals accidental]
+	(if (nil? num-accidentals)
+		pitch-class
+		(keyword
+		 (apply str
+			(flatten
+			 	[(name pitch-class)
+				(vec (for [i (range num-accidentals)]
+					accidental))])))
+		))
 
 (defn sharpen
 	"Adds the passed number of sharps to the passed
 	pitch class keyword and returns that as a new keyword.
 	If nil is passed for num-sharps, returns the pitch-class unmodified."
 	[pitch-class num-sharps]
-	(if (nil? num-sharps)
-		pitch-class
-		(keyword
-		 (apply str
-			(flatten
-			 	[(name pitch-class)
-				(vec (for [i (range num-sharps)]
-					"#"))])))
-		))
+	(accidentalify pitch-class num-sharps "#"))
+
+(defn flattify
+	"Adds the passed number of flats to the passed
+	pitch class keyword and returns that as a new keyword.
+	If nil is passed for num-flats, returns the pitch-class unmodified."
+	[pitch-class num-flats]
+	(accidentalify pitch-class num-flats "b"))
+
+
 
 
 (defn next-natural-pitch-class

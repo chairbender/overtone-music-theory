@@ -27,18 +27,32 @@
 (defn diatonic-collection
 	"Returns a diatonic collection as a vector of the
 	pitch classes making up the collection,
-	formed by starting on the given pitch class. This function treats
-	the special cases of :B# and :E# as :C and :F.
+	formed by starting on the given pitch class.
 	Where two pitch classes are equivalent (like D# and Eb), the
 	pitch class chosen will be the one whose accidental appears in the key
-	signature that describes that diatonic collection. The key signature
-	for a given starting note is equivalent to the key signature for the
+	signature that describes that diatonic collection. For the special case of F,
+	the flat representation will be used (since we could use sharps or flats
+	to get the same diatonic collection, but there are fewer accidentals in the flat version
+	which is preferrable). One way to think about it is -
+	the key signature for a given starting note is equivalent to the key signature for the
 	major scale starting on that note."
 	[pitch-class]
-	(let [sharps-map (sharps-in-signature pitch-class)]
+	(if (or (= pitch-class :F)
+					(.contains (name pitch-class) "b"))
+		;flats
+		(let [flats-map (flats-in-signature pitch-class)]
+		(map #(flattify % (flats-map %))
+			(loop [result-vector [(natural pitch-class)]]
+				(if (= (next-natural-pitch-class (last result-vector)) (natural pitch-class))
+					result-vector
+					(recur (conj result-vector (next-natural-pitch-class (last result-vector))))
+					))))
+		;sharps
+		(let [sharps-map (sharps-in-signature pitch-class)]
 		(map #(sharpen % (sharps-map %))
 			(loop [result-vector [(natural pitch-class)]]
 				(if (= (next-natural-pitch-class (last result-vector)) (natural pitch-class))
 					result-vector
 					(recur (conj result-vector (next-natural-pitch-class (last result-vector))))
-					)))))
+					))))
+		))
