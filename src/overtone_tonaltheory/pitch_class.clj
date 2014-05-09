@@ -32,9 +32,11 @@
 
 (def ^{:private true} previous-flat-in-circle-map
 	(hash-map :F :C :C :G :G :D :D :A :A :E :E :B :B :F))
+
 (defn previous-flat-in-circle
 	"Returns the pitch-class of the flat that comes before the given
-	flat in the circle of flats."
+	flat in the circle of flats.
+	pitch-class should be a pitch class keyword with no accidental."
 	[pitch-class]
 	(previous-flat-in-circle-map pitch-class))
 

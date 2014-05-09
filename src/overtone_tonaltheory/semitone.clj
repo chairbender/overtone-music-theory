@@ -1,7 +1,6 @@
 ;Operations involving semitones
 (ns overtone-tonaltheory.semitone
-	(:require [clojure.math.numeric-tower :as math])
-  (:require [overtone.core :as overtone]))
+	(:require [clojure.math.numeric-tower :as math]))
 
 (defn midi->semitones
   "Converts a midi note to a value representing the number of semitones from C-1.

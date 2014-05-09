@@ -11,9 +11,7 @@
 ;But, if we are following tonal theory, the choice of which pitch-class a given
 ;pitch should be referred to by is based on the diatonic collection described by the key signature
 ;that the pitch is being played in.
-(ns overtone-tonaltheory.diatonic-collection
-	(:use overtone-tonaltheory.pitch-class)
-	(:use overtone-tonaltheory.key-signature))
+(ns overtone-tonaltheory.diatonic-collection)
 
 (defn- accidental
 	"Returns :sharp if the passed pitch class keyword contains a sharp,
