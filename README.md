@@ -1,4 +1,5 @@
 music-theory
 ====================
 
-Music theory (specifically, based on Peter Westergaard's tonal theory) library for Overtone, to facilitate easily using musical structures and concepts to generate sounds.
+Music theory library for Overtone. The long-term goal is to provide libraries for interacting with all sorts of music
+theories, not just one. First milestone is Tonal Theory by Westergaard. Next will be interval vectors and set theory.
