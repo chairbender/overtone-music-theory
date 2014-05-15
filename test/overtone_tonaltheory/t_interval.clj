@@ -1,6 +1,6 @@
-(ns overtone-tonaltheory.t-interval
+(ns music-theory.t-interval
   (:use midje.sweet)
-  (:use [overtone-tonaltheory.interval]))
+  (:use [music-theory.interval]))
 
 (facts "about `interval-keywords`"
   (fact "For intervals up to a major tenth, it returns a vector with a single keyword indicating

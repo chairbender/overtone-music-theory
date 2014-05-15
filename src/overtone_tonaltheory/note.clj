@@ -1,7 +1,7 @@
 ;operations on notes (pitch-class with an octave)
 ;Note keywords are in the same format as overtone, but unlike with overtone the note letters matter so
 ;these functions don't work on midi note integer values.
-(ns overtone-tonaltheory.interval)
+(ns music-theory.interval)
 
 (defn note-letter
 	"Returns the capital letter of the note keyword.

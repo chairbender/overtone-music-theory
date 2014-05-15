@@ -1,6 +1,6 @@
 ;Handles stuff involving key signatures
-(ns overtone-tonaltheory.key-signature
-	(:use overtone-tonaltheory.pitch-class))
+(ns music-theory.key-signature
+	(:use music-theory.pitch-class))
 
 (defn- is-sharp
 	"Returns whether the given pitch-class has a sharp in it."

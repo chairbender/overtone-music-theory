@@ -1,7 +1,7 @@
 ;todo test
-(ns overtone-tonaltheory.t-diatonic-collection
+(ns music-theory.t-diatonic-collection
 	(:use midje.sweet)
-	(:use overtone-tonaltheory.diatonic-collection))
+	(:use music-theory.diatonic-collection))
 
 (facts "about `diatonic-collection`"
 			 (fact "Returns a diatonic collection as a vector of the pitch classes making up the collection,

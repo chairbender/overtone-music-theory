@@ -1,6 +1,6 @@
-(ns overtone-tonaltheory.t-key-signature
+(ns music-theory.t-key-signature
 	(:use midje.sweet)
-	(:use overtone-tonaltheory.key-signature))
+	(:use music-theory.key-signature))
 
 (facts "about `sharps-in-signature`"
 			 (fact "Returns a map from a pitch-class to the number of sharps of that pitch-class

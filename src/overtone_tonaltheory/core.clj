@@ -1,4 +1,4 @@
-(ns overtone-tonaltheory.core)
+(ns music-theory.core)
 
 (defn foo
   "I don't do a whole lot."

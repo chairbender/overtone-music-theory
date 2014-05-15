@@ -2,7 +2,7 @@
 ;care seem to provide much involving pitch-classes, and anyway
 ;it
 
-(ns overtone-tonaltheory.pitch-class
+(ns music-theory.pitch-class
 	(:use clojure.set))
 
 (def ^{:private true} circle-of-flats [:B :E :A :D :G :C :F])

@@ -1,5 +1,5 @@
 ;For dealing with intervals
-(ns overtone-tonaltheory.interval
+(ns music-theory.interval
   (:require [clojure.math.numeric-tower :as math]))
 
 
