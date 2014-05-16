@@ -3,7 +3,8 @@
   :url "https://github.com/kwhipke1/music-theory"
   :license {:name "The MIT License"
             :url "http://opensource.org/licenses/MIT"}
+  :test-paths ["test"]
+  :source-paths ["src"]
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [overtone "0.9.1"]
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [midje "1.5.1"]])

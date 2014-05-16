@@ -11,16 +11,9 @@
 ;But, if we are following tonal theory, the choice of which pitch-class a given
 ;pitch should be referred to by is based on the diatonic collection described by the key signature
 ;that the pitch is being played in.
-(ns music-theory.diatonic-collection)
-
-(defn- accidental
-	"Returns :sharp if the passed pitch class keyword contains a sharp,
-	:flat if it contains a flat, and :none otherwise"
-	[pitch-class]
-	(cond
-	 (.endsWith (name pitch-class) "#") :sharp
-	 (.endsWith (name pitch-class) "b") :flat
-	 :else :none))
+(ns music-theory.diatonic-collection
+  (:use music-theory.pitch-class)
+  (:use music-theory.key-signature))
 
 (defn diatonic-collection
 	"Returns a diatonic collection as a vector of the
@@ -35,8 +28,8 @@
 	the key signature for a given starting note is equivalent to the key signature for the
 	major scale starting on that note."
 	[pitch-class]
-	(if (or (= pitch-class :F)
-					(.contains (name pitch-class) "b"))
+	(if (or (pitch-class-equals pitch-class :F)
+					(> (flats pitch-class) 0))
 		;flats
 		(let [flats-map (flats-in-signature pitch-class)]
 		(map #(flattify % (flats-map %))

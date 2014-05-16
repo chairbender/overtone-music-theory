@@ -2,23 +2,45 @@
 (ns music-theory.key-signature
 	(:use music-theory.pitch-class))
 
-(defn- is-sharp
-	"Returns whether the given pitch-class has a sharp in it."
-	[pitch-class]
-	(.endsWith (name pitch-class) "#"))
+(def ^{:private true} circle-of-flats [:B :E :A :D :G :C :F])
+(def ^{:private true} circle-of-sharps [:F :C :G :D :A :E :B])
 
-(defmacro dbg[x] `(let [x# ~x] (println "dbg:" '~x "=" x#) x#))
+(defn nth-sharp-in-key-signature
+  "Returns the sharp that would appear as the nth sharp in a key signature, where
+	0 means the first sharp."
+  [n]
+  (if (>= n (count circle-of-sharps))
+    (get circle-of-sharps (mod n (count circle-of-sharps)))
+    (get circle-of-sharps n)))
+
+(defn nth-flat-in-key-signature
+  "Returns the sharp that would appear as the nth flat in a key signature, where
+  0 means the first sharp."
+  [n]
+  (if (>= n (count circle-of-flats))
+    (get circle-of-flats (mod n (count circle-of-flats)))
+    (get circle-of-flats n)))
+
+(def ^{:private true} previous-flat-in-circle-map
+  (hash-map :F :C :C :G :G :D :D :A :A :E :E :B :B :F))
+
+(defn previous-flat-in-circle
+  "Returns the pitch-class of the flat that comes before the given
+  flat in the circle of flats.
+  pitch-class should be a pitch class keyword with no alteration"
+  [pitch-class]
+  (previous-flat-in-circle-map pitch-class))
+
 
 (defn- last-sharp?
 	"Figure out if we are at the last sharp in the key signature
 	for the diatonic collection starting on diatonic-root.
-	If the key signature has no sharp in it, just check if the current sharp
-	is a full step below the key sig pitch. If it is, then that's the last one.
-	If the key signature has a sharp in it, check if the accidental with that sharp
-	is already in the result-map AND if the current sharp is a full step below the natural key sig pitch. If so, we're done."
+	If the key signature pitch-class has n sharp alterations on it, check if the natural of that pitch class
+	is already in the result-map with a value of (n) AND if the current sharp is a full step below the natural of the key
+	sig pitch class. If so, we're done."
 	[diatonic-root current-sharp current-key-accidentals]
-	(if (is-sharp diatonic-root)
-		(and (= (current-key-accidentals (natural diatonic-root)) 1)
+	(if (>  (sharps diatonic-root) 0)
+		(and (= (current-key-accidentals (natural diatonic-root)) (sharps diatonic-root))
 				 (= (previous-natural-pitch-class (natural diatonic-root)) (natural current-sharp)))
 		(= (previous-natural-pitch-class diatonic-root) current-sharp)
 		))
@@ -28,15 +50,15 @@
 	for the diatonic collection starting on diatonic-root.
 	If the key signature is F, just check if the current flat
 	is B. If it is, then that's the last one.
-	If the key signature has a flat in it, check if the accidental with that flat
-	is already in the result-map AND if the current flat is
-	the one that comes after the key signature pitch in the circle of flats.
+	If the key signature pitch-class has n flat alterations in it, check if the natural of that pitch-class
+	is already in the result-map with a value of n AND if the current flat is
+	the one that comes after the key signature natural pitch in the circle of flats.
 	If so, we're done."
 	[diatonic-root current-flat current-key-accidentals]
 	(if (= diatonic-root :F)
 		(= current-flat :B)
 		(and (= (natural diatonic-root) (previous-flat-in-circle current-flat))
-				 (= (current-key-accidentals (natural diatonic-root)) 1))
+				 (= (current-key-accidentals (natural diatonic-root)) (flats diatonic-root)))
 		))
 
 
@@ -46,18 +68,15 @@
 	the given diatonic-root. (You can think of a diatonic collection starting
 	on diatonic-root as equivalent to the key of <diatonic-root> major).
 	For example the diatonic collection starting on F flat has a double flat for B, so B->2 in that map.
-	diatonic-root should be a pitch-class keyword that is either :F, :C, or any pitch class
-	with exactly one single flat accidental (like : :Bb or :Gb).
-	Undefined for anything that doesn't meet that.
+	diatonic-root can be any pitch-class keyword
 	"
 	[diatonic-root]
-	(if (= diatonic-root :C)
+	(if (pitch-class-equals diatonic-root :C)
 		(hash-map)
 		(loop [next-flat-index 0
 					 result-map-vector []] ;using a vector to make it easier to handle counting frequency
 			(let [next-flat (nth-flat-in-key-signature next-flat-index)
 						result-map (frequencies result-map-vector)]
-
 				(if (last-flat? diatonic-root next-flat result-map)
 					(frequencies (conj result-map-vector next-flat))
 					(recur (inc next-flat-index) (conj result-map-vector next-flat))
@@ -70,8 +89,7 @@
 	on diatonic-root as equivalent to the key of <diatonic-root> major).
 	For example the diatonic collection starting on G sharp has a double sharp for F, so F->2 in that map.
 	diatonic-root should be a pitch-class keyword (like :A :B or :G#).
-	Works correctly for a diatonic root of any pitch-class including sharped pitch-classes. Undefined
-	for pitch-classes that contain flats or more than one accidental (like double sharps).
+	Works correctly for a diatonic root of any pitch-class.
 	"
 	[diatonic-root]
 	(if (= diatonic-root :C)
@@ -80,7 +98,6 @@
 					 result-map-vector []] ;using a vector to make it easier to handle counting frequency
 			(let [next-sharp (nth-sharp-in-key-signature next-sharp-index)
 						result-map (frequencies result-map-vector)]
-
 				(if (last-sharp? diatonic-root next-sharp result-map)
 					(frequencies (conj result-map-vector next-sharp))
 					(recur (inc next-sharp-index) (conj result-map-vector next-sharp))
