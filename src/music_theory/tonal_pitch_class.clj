@@ -27,8 +27,6 @@
 	[tonal-pitch-class]
 	(keyword (str (first (name (normalize-tonal-pitch-class tonal-pitch-class))))))
 
-
-
 (defn- accidentalify
 	"Adds the passed number of accidentals to the passed
 	pitch class keyword and returns that as a new keyword.
@@ -90,3 +88,18 @@
 	be :A"
 	[tonal-pitch-class]
 	(previous-natural-tonal-pitch-class-map (natural (normalize-tonal-pitch-class tonal-pitch-class))))
+
+;map indicating, for each natural TPC, how many semitones it is away from A
+(def ^{:private true} letter-semitone-count
+  {:A 0 :B 2 :C 3 :D 5 :E 7 :F 8 :G 10})
+
+(defn tonal-pitch-class-semitone-distance
+  "Returns an integer indicating the offset in semitones of other-tpc from tpc, if
+  they were notes in the same octave."
+  [tonal-pitch-class other-tonal-pitch-class]
+  (+ (- (sharps other-tonal-pitch-class) (sharps tonal-pitch-class))
+     (- (flats tonal-pitch-class) (flats other-tonal-pitch-class))
+     (- (get letter-semitone-count (natural other-tonal-pitch-class))
+        (get letter-semitone-count (natural tonal-pitch-class)))
+     )
+  )
