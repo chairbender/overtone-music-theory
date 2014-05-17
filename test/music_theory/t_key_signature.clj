@@ -3,7 +3,7 @@
 	(:use music-theory.key-signature))
 
 (facts "about `sharps-in-signature`"
-			 (fact "Returns a map from a pitch-class to the number of sharps of that pitch-class
+			 (fact "Returns a map from a tonal-pitch-class to the number of sharps of that tonal-pitch-class
 						 in the key signature for the diatonic collection starting on diatonic-root."
 						 (sharps-in-signature :C) => (hash-map)
 						 (sharps-in-signature :G) => (hash-map :F 1)
@@ -15,7 +15,7 @@
 						 ))
 
 (facts "about `flats-in-signature`"
-			 (fact "Returns a map from a pitch-class to the number of flats of that pitch-class
+			 (fact "Returns a map from a tonal-pitch-class to the number of flats of that tonal-pitch-class
 						 in the key signature for the diatonic collection starting on diatonic-root."
 						 (flats-in-signature :C) => (hash-map)
 						 (flats-in-signature :F) => (hash-map :B 1)

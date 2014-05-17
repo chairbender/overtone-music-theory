@@ -6,7 +6,7 @@
   "Converts a midi note to a value representing the number of semitones from C-1.
   For example :A-1 is 0 and :C-1 is 3."
   [note]
-  (if (contains? #{:A :Bb :B} ((overtone/note-info note) :pitch-class))
+  (if (contains? #{:A :Bb :B} ((overtone/note-info note) :tonal-pitch-class))
     (- (overtone/note note) 9)
     (+ (overtone/note note) 3)))
 (defn semitones->midi

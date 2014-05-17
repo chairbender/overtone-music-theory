@@ -1,6 +1,6 @@
-(ns music-theory.t-pitch-class
+(ns music-theory.t_tonal_pitch_class
 	(:use midje.sweet)
-	(:use music-theory.pitch-class))
+	(:use music-theory.tonal-pitch-class))
 
 (facts "about `nth-sharp-in-key-signature`"
 			 (fact "Returns the sharp that would appear as the nth sharp in a key signature"

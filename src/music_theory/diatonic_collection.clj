@@ -8,11 +8,11 @@
 ;use the scale function to represent the concept of a diatonic collection.
 ;Given a midi note with two possible pitch classes (like D# and Eb),
 ;overtone always picks the same pitch class when calling note-info on that note.
-;But, if we are following tonal theory, the choice of which pitch-class a given
+;But, if we are following tonal theory, the choice of which tonal-pitch-class a given
 ;pitch should be referred to by is based on the diatonic collection described by the key signature
 ;that the pitch is being played in.
 (ns music-theory.diatonic-collection
-  (:use music-theory.pitch-class)
+  (:use music-theory.tonal-pitch-class)
   (:use music-theory.key-signature))
 
 (defn diatonic-collection
@@ -27,23 +27,23 @@
 	which is preferrable). One way to think about it is -
 	the key signature for a given starting note is equivalent to the key signature for the
 	major scale starting on that note."
-	[pitch-class]
-	(if (or (pitch-class-equals pitch-class :F)
-					(> (flats pitch-class) 0))
+	[tonal-pitch-class]
+	(if (or (tonal-pitch-class-equals tonal-pitch-class :F)
+					(> (flats tonal-pitch-class) 0))
 		;flats
-		(let [flats-map (flats-in-signature pitch-class)]
+		(let [flats-map (flats-in-signature tonal-pitch-class)]
 		(map #(flattify % (flats-map %))
-			(loop [result-vector [(natural pitch-class)]]
-				(if (= (next-natural-pitch-class (last result-vector)) (natural pitch-class))
+			(loop [result-vector [(natural tonal-pitch-class)]]
+				(if (= (next-natural-tonal-pitch-class (last result-vector)) (natural tonal-pitch-class))
 					result-vector
-					(recur (conj result-vector (next-natural-pitch-class (last result-vector))))
+					(recur (conj result-vector (next-natural-tonal-pitch-class (last result-vector))))
 					))))
 		;sharps
-		(let [sharps-map (sharps-in-signature pitch-class)]
+		(let [sharps-map (sharps-in-signature tonal-pitch-class)]
 		(map #(sharpen % (sharps-map %))
-			(loop [result-vector [(natural pitch-class)]]
-				(if (= (next-natural-pitch-class (last result-vector)) (natural pitch-class))
+			(loop [result-vector [(natural tonal-pitch-class)]]
+				(if (= (next-natural-tonal-pitch-class (last result-vector)) (natural tonal-pitch-class))
 					result-vector
-					(recur (conj result-vector (next-natural-pitch-class (last result-vector))))
+					(recur (conj result-vector (next-natural-tonal-pitch-class (last result-vector))))
 					))))
 		))

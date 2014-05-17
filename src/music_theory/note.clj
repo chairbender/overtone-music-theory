@@ -1,4 +1,4 @@
-;operations on notes (pitch-class with an octave)
+;operations on notes (tonal-pitch-class with an octave)
 ;Note keywords are in the same format as overtone, but unlike with overtone the note letters matter so
 ;these functions don't work on midi note integer values.
 (ns music-theory.interval)
