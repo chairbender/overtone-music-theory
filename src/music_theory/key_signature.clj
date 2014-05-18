@@ -67,8 +67,8 @@
 	key-signature for the diatonic collection formed from
 	the given diatonic-root. (You can think of a diatonic collection starting
 	on diatonic-root as equivalent to the key of <diatonic-root> major).
-	For example the diatonic collection starting on F flat has a double flat for B, so B->2 in that map.
-	diatonic-root can be any tonal-pitch-class keyword
+	For example the diatonic collection starting on F flat has a double flat for B, so B->2 in that map..
+	undefined if diatonic root is not :C, :F, or does not have a flat alteration in it.
 	"
 	[diatonic-root]
 	(if (tonal-pitch-class-equals diatonic-root :C)
@@ -89,7 +89,7 @@
 	on diatonic-root as equivalent to the key of <diatonic-root> major).
 	For example the diatonic collection starting on G sharp has a double sharp for F, so F->2 in that map.
 	diatonic-root should be a tonal-pitch-class keyword (like :A :B or :G#).
-	Works correctly for a diatonic root of any tonal-pitch-class.
+	undefined if diatonic root has a flat alteration in it.
 	"
 	[diatonic-root]
 	(if (= diatonic-root :C)

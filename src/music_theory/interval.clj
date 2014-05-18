@@ -313,5 +313,3 @@
       (note (note-letter next-note) (note-alterations next-note) (+ (note-octave bottom-note) octaves))
       ))
     interval))
-
-;todo exception throwing when intervals are invalid (for example P7)
