@@ -37,6 +37,12 @@
 		(* -1 (read-string (str (.charAt (name normal-note) (dec (count (name normal-note)))))))
     (read-string (str (.charAt (name normal-note) (dec (count (name normal-note)))))))))
 
+(defn note-alterations
+  "Returns the alterations on the note keyword as a string."
+  [note]
+  (or (re-find #"[#b]+" (name (normalize-note note))) "")
+  )
+
 
 
 (defn note-semitones
@@ -47,3 +53,9 @@
     (+ (* 12 (inc (note-octave normal-note)))
      (tonal-pitch-class-semitone-distance :C (note-tonal-pitch-class normal-note))
      )))
+
+(defn note
+  "Creates a note given a note letter (string), alterations (string), and
+  integer octave."
+  [letter alterations octave]
+  (keyword (str letter alterations octave)))

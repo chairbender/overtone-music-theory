@@ -19,6 +19,6 @@
 						 in the key signature for the diatonic collection starting on diatonic-root."
 						 (flats-in-signature :C) => (hash-map)
 						 (flats-in-signature :F) => (hash-map :B 1)
-						 (flats-in-signature :B) => (hash-map :B 1 :E 1)
+						 (flats-in-signature :Bb) => (hash-map :B 1 :E 1)
 						 (flats-in-signature :Fb) => (hash-map :B 2 :E 1 :A 1 :D 1 :G 1 :C 1 :F 1)
 						 ))

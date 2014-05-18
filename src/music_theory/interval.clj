@@ -6,7 +6,71 @@
 ;greater than or equal to 1.
 (ns music-theory.interval
   (:use music-theory.note)
-  (:use music-theory.tonal-pitch-class))
+  (:use music-theory.tonal-pitch-class)
+  (:use music-theory.utility))
+
+(defn- interval-quality-unchecked
+  "Returns a string of the interval quality abbreviation of the given interval keyword."
+  [interval]
+  (or (re-find #"[daPMm]+" (name interval)) "")
+  )
+
+(defn- interval-number-unchecked
+  "returns an integer indicating the interval's number. interval
+  should be an interval keyword."
+  [interval]
+  (read-string (re-find #"\d+" (name interval))))
+
+
+
+(defn- valid-interval?
+  "True if the interval keyword is valid. False otherwise."
+  [interval]
+  (and
+    (not (nil? (re-find #"[daPMm]+\d+" (name interval))))
+    (let
+      [adjusted-interval-number (if (>= (interval-number-unchecked interval) 8)
+                                  (mod (interval-number-unchecked interval) 7)
+                                  (interval-number-unchecked interval))]
+    (or
+    (and
+      (= "P" (interval-quality-unchecked interval))
+      (not=  -1 (.indexOf [4 1 5] adjusted-interval-number)))
+
+
+
+    (and
+      (= "m" (interval-quality-unchecked interval))
+      (not= -1 (.indexOf [2 6 3 7] adjusted-interval-number)))
+
+
+    (and
+      (= "M" (interval-quality-unchecked interval))
+      (not= -1 (.indexOf [2 6 3 7] adjusted-interval-number)))
+
+
+    (and
+      (.contains (interval-quality-unchecked interval) "d")
+      (not= -1 (.indexOf [5 1 4 7 3 6 2] adjusted-interval-number)))
+
+    (and
+      (.contains (interval-quality-unchecked interval) "a")
+      (not= -1 (.indexOf [5 1 4 7 3 6 2] adjusted-interval-number)))
+  ))))
+
+(defn- validate-intervals
+  "Ensures that intervals are all valid interval. If not, throws an exception. If it is,
+  executes body."
+  [body & intervals]
+  (let [intervals-vec (vec intervals)] (do
+    (doseq [x (range (count intervals-vec))]
+    (when (not (valid-interval? (get intervals-vec x)))
+      (throw (Exception. (str "The interval " (name (get intervals-vec x)) " is invalid.")))
+      )
+    )
+    body
+    ))
+  )
 
 (defn- line-of-fifths-quality
   "Given an index, returns the quality abbreviation
@@ -32,9 +96,9 @@
 
 (def ^{:private true} line-of-fifths-number-pattern ["1" "5" "2" "6" "3" "7" "4"])
 (defn- line-of-fifths-number
-  "Given an index, returns the number of the interval at that point, as a string, (with 'U' being unison)
-  0 is defined to be U, and the pattern as one goes lower than U is 4, 7, 3, 6, 2, 5, U (repeats).
-  As the index increases, the pattern is 5, 2, 6, 3, 7, 4, U (repeats)."
+  "Given an index, returns the number of the interval at that point, as a string, (with '1' being unison)
+  0 is defined to be 1, and the pattern as one goes lower than 1 is 4, 7, 3, 6, 2, 5, U (repeats).
+  As the index increases, the pattern is 5, 2, 6, 3, 7, 4, 1 (repeats)."
   [index]
   (if (>= index 0)
     (get line-of-fifths-number-pattern (mod index (count line-of-fifths-number-pattern)))
@@ -50,12 +114,15 @@
   (keyword (str (line-of-fifths-quality index) (line-of-fifths-number index)))
   )
 
+
+
 (def ^{:private true} line-of-fifths-letter-pattern ["F" "C" "G" "D" "A" "E" "B"])
 
 (defn- letter-index-offset
   "letter index is for the line of fifths wtih 0 as F and repeating
-  as index increases (C  D A E B F C ... and for negative numbers as well). This gives the
-  new letter index given a starting tpc and an offset integer"
+  as index increases (C G D A E B F C ... and for negative numbers as well). This gives the
+  new letter index given a starting tpc and an offset integer.
+  For example, if TPC is C and offset is 2, the result is 3."
   [tonal-pitch-class offset]
   (+ offset (.indexOf line-of-fifths-letter-pattern (name (natural tonal-pitch-class))))
   )
@@ -102,7 +169,7 @@
   (let [alteration-index
         (+ (quot (if (>= (letter-index-offset tonal-pitch-class index) 0)
                    (letter-index-offset tonal-pitch-class index)
-                   (- (letter-index-offset tonal-pitch-class index) (count line-of-fifths-letter-pattern)))
+                   (- (letter-index-offset tonal-pitch-class index) 6))
                  (count line-of-fifths-letter-pattern))
            (if (> (sharps tonal-pitch-class) 0)
              (sharps tonal-pitch-class)
@@ -141,14 +208,17 @@
 (defn interval-quality
   "Returns a string of the interval quality abbreviation of the given interval keyword."
   [interval]
-  (re-find #"[daPMm]+" (name interval))
-  )
+  (validate-intervals
+    (interval-quality-unchecked interval)
+    interval))
 
 (defn interval-number
   "returns an integer indicating the interval's number. interval
   should be an interval keyword."
   [interval]
-  (read-string (re-find #"\d+" (name interval))))
+  (validate-intervals
+    (interval-number-unchecked interval)
+    interval))
 
 (defn lower-note
   "returns the note that would appear lower on the staff (lower letter and octave),
@@ -186,10 +256,62 @@
     (interval (interval-quality base-interval) (+ (* 7 octaves) (interval-number base-interval))))))
 
 (defn compound-interval-keyword
-  "Like interval-keyword, but uses the compound interval name for intervals larger
-  than a perfect octave (:P8). So an interval of a major tenth would return :M3"
+  "Like interval-keyword, but uses the compound interval name for intervals with
+  an interval number larger than 8. So an interval of a major tenth would return :M3"
   [note other-note]
-  (line-of-fifths-interval
-    (line-of-fifths-tonal-pitch-class-index
-      (note-tonal-pitch-class note)
-      (note-tonal-pitch-class other-note))))
+  (if (= 8 (interval-number (interval-keyword note other-note)))
+    (interval-keyword note other-note)
+    (line-of-fifths-interval
+      (line-of-fifths-tonal-pitch-class-index
+        (note-tonal-pitch-class note)
+        (note-tonal-pitch-class other-note)))))
+
+
+
+(defn- line-of-fifths-interval-index
+  "Given an interval name, returns the index of the interval in the line of fifths
+  (i.e. with index 0 being at the center and the interval being P1).
+  For intervals with an interval number of 8 or larger, changes the interval
+  number to be mod 7 (i.e. brings the interval to within an octave)"
+  [interval]
+  (let
+    [adjusted-interval-number (if (>= (interval-number interval) 8)
+                                (mod (interval-number interval) 7)
+                                (interval-number interval))]
+    (cond
+      (= "P" (interval-quality interval))
+      (dec (.indexOf [4 1 5] adjusted-interval-number))
+
+      (= "m" (interval-quality interval))
+      (- (.indexOf [2 6 3 7] adjusted-interval-number) 5)
+
+      (= "M" (interval-quality interval))
+      (+ (.indexOf [2 6 3 7] adjusted-interval-number) 2)
+
+      (.contains (interval-quality interval) "d")
+      (+
+        (* -7 (occurrences (interval-quality interval) "d"))
+        (- (.indexOf [5 1 4 7 3 6 2] adjusted-interval-number))
+        1)
+
+      (.contains (interval-quality interval) "a")
+      (+
+        (* 7 (occurrences (interval-quality interval) "a"))
+        (.indexOf [4 1 5 2 6 3 7] adjusted-interval-number)
+        -1))))
+
+(defn interval-above
+  "Returns the note that is the given interval
+  above the given bottom-note, with the correct enharmonic name."
+  [bottom-note interval]
+  (validate-intervals
+    (let
+    [octaves (quot (interval-number interval) 8)
+     next-note (line-of-fifths-tonal-pitch-class (note-tonal-pitch-class bottom-note) (line-of-fifths-interval-index interval))]
+    (if (> (int (note-letter bottom-note)) (int (note-letter next-note)))
+      (note (note-letter next-note) (note-alterations next-note) (+ (note-octave bottom-note) octaves 1))
+      (note (note-letter next-note) (note-alterations next-note) (+ (note-octave bottom-note) octaves))
+      ))
+    interval))
+
+;todo exception throwing when intervals are invalid (for example P7)
