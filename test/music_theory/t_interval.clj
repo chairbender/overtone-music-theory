@@ -30,3 +30,17 @@
              (interval-above :C#4 :d8) => :C5
              (interval-above :C4 :a8) => :C#5
              ))
+
+(facts "about `interval-below`"
+       (fact "Returns the note that is the given interval
+       below the given note, with the correct enharmonic name."
+             (interval-below :B4 :M2) => :A4
+             (interval-below :C4 :m3) => :A4
+             (interval-below :A4 :P8) => :A3
+             (interval-below :A3 :P1) => :A3
+             (interval-below :C#4 :M10) => :A3
+             (interval-below :Fb4 :dd2) => :E#4
+             (interval-below :A4 :M2) => :G3
+             (interval-below :C5 :d8) => :C#4
+             (interval-below :C#5 :a8) => :C4
+             ))

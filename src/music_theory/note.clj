@@ -38,7 +38,7 @@
     (read-string (str (.charAt (name normal-note) (dec (count (name normal-note)))))))))
 
 (defn note-alterations
-  "Returns the alterations on the note keyword as a string."
+  "Returns the alterations on the note keyword as a string. Empty string if none."
   [note]
   (or (re-find #"[#b]+" (name (normalize-note note))) "")
   )

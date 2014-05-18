@@ -27,6 +27,7 @@
 	[tonal-pitch-class]
 	(keyword (str (first (name (normalize-tonal-pitch-class tonal-pitch-class))))))
 
+
 (defn- accidentalify
 	"Adds the passed number of accidentals to the passed
 	pitch class keyword and returns that as a new keyword.
@@ -103,3 +104,18 @@
         (get letter-semitone-count (natural tonal-pitch-class)))
      )
   )
+
+
+(defn tonal-pitch-class-letter
+  "Returns the letter of the tonal pitch class."
+  [tonal-pitch-class]
+  (let [normal-pitch-class (normalize-tonal-pitch-class tonal-pitch-class)] (.charAt (name normal-pitch-class) 0)))
+
+(defn tonal-pitch-class-alterations
+  "Returns the alterations of the tonal pitch class
+  as a string. Empty string if none."
+  [tonal-pitch-class]
+  (or (re-find #"[#b]+" (name (normalize-tonal-pitch-class tonal-pitch-class))) "")
+  )
+
+

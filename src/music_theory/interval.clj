@@ -239,8 +239,54 @@
     other-note
     note))
 
+(defn simplify-compound-interval
+  "Returns the simple interval from which the compound interval is
+  composed. If compound interval is not compound, just returns the interval.
+  Anything above an interval number of 8 is considered a compound interval."
+  [compound-interval]
+  (interval (interval-quality compound-interval)
+            (if (> (interval-number compound-interval) 8)
+              (+ 2 (mod (- (interval-number compound-interval) 2) 7))
+              (interval-number compound-interval))))
+
+(defn- invert-quality
+  "inverts the passed quality string.
+  Turns m to M, M to m, aa to dd, and dd to aa (and any number of augments/diminishes)"
+  [quality]
+  (cond
+    (.contains quality "m")
+    (.replace quality "m" "M")
+
+    (.contains quality "M")
+    (.replace quality "M" "m")
+
+    (.contains quality "a")
+    (.replace quality "a" "d")
+
+    (.contains quality "d")
+    (.replace quality "d" "a")
+
+    :else quality
+    ))
+
+(defn invert-interval
+  "Returns the complement/inversion of the interval.
+  If the interval is compound, just treats as the simple interval from which
+  it is compounded (basically shifts everything to within an octave)."
+  [interval-to-invert]
+  (validate-intervals
+    (let [simple-interval (simplify-compound-interval interval-to-invert)]
+    (interval
+      (invert-quality (interval-quality simple-interval))
+      (- 9 (interval-number simple-interval))
+      )
+    )
+    interval-to-invert
+    )
+  )
+
 (defn interval-keyword
-  "Returns the interval name for the interval betwwen the notes.
+  "Returns the interval name for the interval between the notes.
   Always defines the interval with respect to the lower note, so order
   of the parameters doesn't matter
   For intervals larger than an octave, uses an
@@ -256,15 +302,18 @@
     (interval (interval-quality base-interval) (+ (* 7 octaves) (interval-number base-interval))))))
 
 (defn compound-interval-keyword
-  "Like interval-keyword, but uses the compound interval name for intervals with
-  an interval number larger than 8. So an interval of a major tenth would return :M3"
+  "Like interval-keyword, but uses the simple interval from which the compound interval
+   is formed for intervals larger than 8. So an interval of a major tenth would return :M3"
   [note other-note]
-  (if (= 8 (interval-number (interval-keyword note other-note)))
-    (interval-keyword note other-note)
-    (line-of-fifths-interval
-      (line-of-fifths-tonal-pitch-class-index
-        (note-tonal-pitch-class note)
-        (note-tonal-pitch-class other-note)))))
+  (let
+    [lower-note (lower-note note other-note)
+    higher-note (higher-note note other-note)]
+    (if (= 8 (interval-number (interval-keyword lower-note higher-note)))
+      (interval-keyword lower-note higher-note)
+      (line-of-fifths-interval
+        (line-of-fifths-tonal-pitch-class-index
+          (note-tonal-pitch-class lower-note)
+          (note-tonal-pitch-class higher-note))))))
 
 
 
@@ -276,7 +325,7 @@
   [interval]
   (let
     [adjusted-interval-number (if (>= (interval-number interval) 8)
-                                (mod (interval-number interval) 7)
+                                (inc (mod (dec (interval-number interval)) 7))
                                 (interval-number interval))]
     (cond
       (= "P" (interval-quality interval))
@@ -300,6 +349,17 @@
         (.indexOf [4 1 5 2 6 3 7] adjusted-interval-number)
         -1))))
 
+(defn- line-of-fifths-center
+  "Returns the TPC indicating the center of the line-of-fifths given
+  an interval name and tonal-pitch-class the interval should have in that line of fifths."
+  [interval tonal-pitch-class]
+  (let [interval-index (line-of-fifths-interval-index interval)]
+    ;just shift the center temporarily to the tonal pitch class,
+    ;then figure out what the pitch-class would be using the interval index
+    ;as an offset
+    (line-of-fifths-tonal-pitch-class tonal-pitch-class (- interval-index))
+    ))
+
 (defn interval-above
   "Returns the note that is the given interval
   above the given bottom-note, with the correct enharmonic name."
@@ -307,9 +367,30 @@
   (validate-intervals
     (let
     [octaves (quot (interval-number interval) 8)
-     next-note (line-of-fifths-tonal-pitch-class (note-tonal-pitch-class bottom-note) (line-of-fifths-interval-index interval))]
-    (if (> (int (note-letter bottom-note)) (int (note-letter next-note)))
-      (note (note-letter next-note) (note-alterations next-note) (+ (note-octave bottom-note) octaves 1))
-      (note (note-letter next-note) (note-alterations next-note) (+ (note-octave bottom-note) octaves))
+     next-tonal-pitch-class (line-of-fifths-tonal-pitch-class (note-tonal-pitch-class bottom-note) (line-of-fifths-interval-index interval))]
+    (if (> (int (note-letter bottom-note)) (int (note-letter next-tonal-pitch-class)))
+      (note (tonal-pitch-class-letter next-tonal-pitch-class) (tonal-pitch-class-alterations next-tonal-pitch-class) (+ (note-octave bottom-note) octaves 1))
+      (note (tonal-pitch-class-letter next-tonal-pitch-class) (tonal-pitch-class-alterations next-tonal-pitch-class) (+ (note-octave bottom-note) octaves))
       ))
     interval))
+
+(defn interval-below
+  "returns the note that is the given interval below the given top-note,
+  with the correct enharmonic name."
+  [top-note interval]
+  (validate-intervals
+    (let
+      [octaves (quot (interval-number interval) 8)
+       bottom-tonal-pitch-class (line-of-fifths-center interval (note-tonal-pitch-class top-note))]
+      (if (> (int (note-letter bottom-tonal-pitch-class)) (int (note-letter top-note)))
+        (note (tonal-pitch-class-letter bottom-tonal-pitch-class) (tonal-pitch-class-alterations bottom-tonal-pitch-class) (- (note-octave top-note) octaves 1))
+        (note (tonal-pitch-class-letter bottom-tonal-pitch-class) (tonal-pitch-class-alterations bottom-tonal-pitch-class) (- (note-octave top-note) octaves))
+        ))
+
+    interval
+    ))
+
+
+;(defn harmonic-interval-bottom
+;  "Returns the note that would be the bottom note in the given harmonic interval,
+;  if top-note was the top note of the interval.")
