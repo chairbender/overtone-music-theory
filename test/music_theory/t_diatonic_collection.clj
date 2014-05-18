@@ -1,4 +1,3 @@
-;todo test
 (ns music-theory.t-diatonic-collection
 	(:use midje.sweet)
 	(:use music-theory.diatonic-collection))
