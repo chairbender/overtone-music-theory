@@ -2,7 +2,8 @@
 ;where functions do stuff with tonal theory "lines" (sequences of notes with specific durations)
 
 (ns music-theory.linear-operation
-  (:use music-theory.line))
+  (:use music-theory.line)
+  (:use music-theory.interval))
 
 (defn rearticulation
   "given a line and an index,
@@ -20,19 +21,26 @@
       index)))
 
 
-;
-;(defn neighbor
-;  "Given a line an an index pointing at the first note of a rearticulation in that line, returns the line
-;  with a neighbor inserted between the rearticulation notes. A neighbor is simply a note a minor or major second
-;  above or below the two notes, caused by rearticulating the first note
-;  of the rearticulation, then moving it up or down a second. if up? is true, the neighbor will be above, otherwise it will be
-;  below. The duration of the neighbor will be neighbor-duration, and it must be less than
-;  the duration of the first note of the rearticulation. interval must be :m2 or :M2."
-;  [rearticulation-line up? interval neighbor-duration]
-;  (let [line-note (line-note-at rearticulation-line 0)]
-;    (line (:note line-note) (:dur line-note))
-;
-;
-;    )
-;  )
+
+(defn neighbor
+  "Given a line an an index pointing at the first note of a rearticulation in that line, returns the line
+  with a neighbor inserted between the rearticulation notes. A neighbor is simply a note a minor or major second
+  above or below the two notes, caused by rearticulating the first note
+  of the rearticulation, then moving it up or down a second. if up? is true, the neighbor will be above, otherwise it will be
+  below. The duration of the neighbor will be neighbor-duration, and it must be less than
+  the duration of the first note of the rearticulation. interval must be :m2 or :M2."
+  [target-line index up? interval neighbor-duration]
+  (let [target-line-note (line-note-at target-line index)]
+    (let [rearticulated-line
+          ;rearticulate the first note of the rearticulation
+          (rearticulation target-line index (- (:dur target-line-note) neighbor-duration))]
+      (replace-line rearticulated-line
+        ;increment or decrement the second note of the new rearticulation
+        [(line-note
+          (if (= true up?)
+            (interval-above (:note target-line-note) interval)
+            (interval-below (:note target-line-note) interval))
+          (:dur (line-note-at rearticulated-line (inc index))))]
+        (inc index)
+        ))))
 

@@ -31,3 +31,30 @@
                1 1/3) => (line :A4 1 :B4 1/3 :B4 2/3 :C4 1)
              )
   )
+
+(facts "about `neighbor`"
+       (fact "Returns a line containing a neighbor of the articulation starting at the given index."
+             (neighbor
+               (line :C4 1
+                     :D4 1
+                     :D4 1
+                     :E4 1)
+               1 true :M2 1/2) => (line :C4 1
+                                        :D4 1/2
+                                        :E4 1/2
+                                        :D4 1
+                                        :E4 1)
+
+             (neighbor
+               (line :C4 1/2
+                     :C4 1/2
+                     :D4 1
+                     :D4 1/4
+                     :E4 1)
+               0 false :m2 1/4) => (line :C4 1/4
+                                         :B4 1/4
+                                         :C4 1/2
+                                         :D4 1
+                                         :D4 1/4
+                                         :E4 1)
+             ))
