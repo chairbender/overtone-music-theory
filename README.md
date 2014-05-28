@@ -9,3 +9,5 @@ Ideas
 Come up with abbreviated versions of the long function names (as optional alternatives, not to replace
 the existing names), to make it easier to type during
 livecoding.
+
+Rendering sheet music.

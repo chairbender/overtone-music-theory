@@ -389,8 +389,3 @@
 
     interval
     ))
-
-
-;(defn harmonic-interval-bottom
-;  "Returns the note that would be the bottom note in the given harmonic interval,
-;  if top-note was the top note of the interval.")

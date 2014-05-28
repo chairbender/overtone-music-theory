@@ -16,8 +16,8 @@
   Tempo should be a double representing the beats per minute.
   Beat duration should be a fraction representing the duration that a beat lasts (i.e. the bottom
   of the time signature). For example, (1/4) would mean each beat is a quarter note."
-  ([duration] 100)
-  ([duration tempo] 1/4)
-  ([duration tempo beat-duration])
-  (* (/ 1 tempo) 60000 (/ 1 beat-duration) duration))
+  ([duration] (duration 100 1/4))
+  ([duration tempo] (duration tempo 1/4))
+  ([duration tempo beat-duration]
+  (* (/ 1 tempo) 60000 (/ 1 beat-duration) duration)))
 
