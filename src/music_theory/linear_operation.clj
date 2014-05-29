@@ -44,3 +44,30 @@
         (inc index)
         ))))
 
+(defn arpeggiate
+  "Given a line, an index into that line, and a note forming a consonant interval
+  with the note at that index (tonal theory consonance), returns a new line with
+  an arpeggiation performed at that index using the given note, where arpeggiation
+  note durations equals the original note's duration, and the duration of the first
+  note equals first-duration. up? indicates whether the arpeggiation should go from low
+  note to high note or vice versa. first-duration must be less than the duration of the note
+  at the given index in the line. arpeggiate-note must form a tonal theory consonant interval
+  (see the consonant? function in interval.clj)."
+  [target-line index up? arpeggiate-note first-duration]
+  (let [target-line-note (line-note-at target-line index)]
+    (let [rearticulated-line
+          ;rearticulate the note that will be the first of the arpeggiation
+          (rearticulation target-line index first-duration)]
+      (let [lower-note (lower-note arpeggiate-note (:note target-line-note))
+            higher-note (higher-note arpeggiate-note (:note target-line-note))]
+        (if up?
+          (replace-line rearticulated-line
+                        [(line-note lower-note first-duration)
+                         (line-note higher-note (- (:dur target-line-note) first-duration))]
+                        index (inc index))
+          (replace-line rearticulated-line
+                        [(line-note higher-note first-duration)
+                         (line-note lower-note (- (:dur target-line-note) first-duration))]
+                        index (inc index)
+                        ))))))
+

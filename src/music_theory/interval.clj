@@ -389,3 +389,18 @@
 
     interval
     ))
+(defn consonant?
+  "Returns true if the given interval is consonant (as defined by tonal theory).
+  Consonant intervals are: P1 P8 P5 P4 (when the low note is not the lowest note sounding) M3 m3
+  M6 and m6. lowest-note-sounding? indicates to the function whether the low note of the interval
+  is the lowest note sounding in whatever context the interval appears in (for example if there is a third line
+  where a note is playing below the two notes in the interval, lowest-note-sounding? should be set to false)"
+  [interval lowest-note-sounding?]
+  (or
+    (contains? #{:P1 :P8 :P5 :M3 :m3 :M6 :m6} interval)
+    (and
+      (not lowest-note-sounding?)
+      (= :P4 interval)
+      )
+    )
+  )

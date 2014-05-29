@@ -10,4 +10,7 @@ Come up with abbreviated versions of the long function names (as optional altern
 the existing names), to make it easier to type during
 livecoding.
 
+Look for theories or ways of analyzing timbre and how people appreciate different timbres.
+Or something that has some knowledge about what sounds "good" (including timbre, not just pitch)
+
 Rendering sheet music.

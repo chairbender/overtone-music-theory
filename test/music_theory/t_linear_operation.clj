@@ -58,3 +58,23 @@
                                          :D4 1/4
                                          :E4 1)
              ))
+
+(facts "about `arpeggiate`"
+       (fact "arpeggiates the given note in the line"
+
+             (arpeggiate
+               (line :A4 1 :C4 1 :D4 1)
+               1 true :E4 1/2) => (line :A4 1 :C4 1/2 :E4 1/2 :D4 1)
+
+             (arpeggiate
+               (line :A4 1 :C4 1 :D4 1)
+               1 false :E4 1/2) => (line :A4 1 :E4 1/2 :C4 1/2 :D4 1)
+
+             (arpeggiate
+               (line :A4 1 :C4 1 :D4 1)
+               1 true :G3 1/2) => (line :A4 1 :G3 1/2 :C4 1/2 :D4 1)
+
+             (arpeggiate
+               (line :A4 1 :C4 1 :D4 1)
+               1 false :G3 1/2) => (line :A4 1 :C4 1/2 :G3 1/2 :D4 1)
+             ))
