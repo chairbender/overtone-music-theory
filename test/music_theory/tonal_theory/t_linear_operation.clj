@@ -1,7 +1,7 @@
-(ns music-theory.t-linear-operation
+(ns music-theory.tonal-theory.t-linear-operation
   (:use midje.sweet)
-  (:use music-theory.linear-operation)
-  (:use music-theory.line))
+  (:use music-theory.tonal-theory.linear-operation)
+  (:use music-theory.tonal-theory.line))
 
 
 (facts "about `rearticulation`"

@@ -1,10 +1,10 @@
 ;functions involving the notes and tonal pitch classes of a given key/scale
 
-(ns music-theory.key
-  (:use music-theory.diatonic-collection)
-  (:use music-theory.note)
-  (:use music-theory.tonal-pitch-class)
-  (:use music-theory.interval))
+(ns music-theory.tonal-theory.key
+  (:use music-theory.tonal-theory.diatonic-collection)
+  (:use music-theory.tonal-theory.note)
+  (:use music-theory.tonal-theory.tonal-pitch-class)
+  (:use music-theory.tonal-theory.interval))
 
 (defn- rotate-key-vector
   "rotates the vector forward by the given offset, for example, if the vector is
@@ -20,7 +20,7 @@
     (get key-vector (mod (- 5 offset) 7))
     (get key-vector (mod (- 6 offset) 7))])
 
-(defn key-tonal-pitch-classes
+(defn key-vector
   "Returns a vector of the tonal pitch classes that comprise the specified key.
   The vector contains, in order, the I, II, II, IV, V, VI, and VII diatonic degrees
   of the key. tonic indicates which tonal pitch class should be the tonic of the
@@ -37,20 +37,17 @@
       )))
 
 (defn scale
-  "Given a note and a mode keyword (:major or :minor),
+  "Given a key vector and starting octave,
   returns a vector of 7 notes representing the single-octave scale of the
-  key whose tonic has the same tonal pitch class as the starting
-  note. for example :A4 :major would return the 7 notes of the A major scale,
-  starting at :A4."
-  [starting-note mode]
-  (let [tonal-pitch-classes (key-tonal-pitch-classes (tonal-pitch-class-from-note starting-note) mode)
-        starting-octave (note-octave starting-note)]
-    (vec
-      (if (= (tonal-pitch-class-letter (get tonal-pitch-classes 0)) \A)
-        (map #(note-from-tonal-pitch-class % starting-octave) tonal-pitch-classes)
-        ;need to add an octave change since we aren't starting on A
-        (let [octave-switch-index (.indexOf (vec (map #(natural %) tonal-pitch-classes)) :A)]
-          (for [x (range 7)]
-            (if (>= x octave-switch-index)
-              (note-from-tonal-pitch-class (get tonal-pitch-classes x) (inc starting-octave))
-              (note-from-tonal-pitch-class (get tonal-pitch-classes x) starting-octave))))))))
+  key, starting at the given octave and ending at degree VII."
+  [key starting-octave]
+  (vec
+    (if (= (tonal-pitch-class-letter (get key 0)) \A)
+      (map #(note-from-tonal-pitch-class % starting-octave) key)
+      ;need to add an octave change since we aren't starting on A
+      (let [octave-switch-index (.indexOf (vec (map #(natural %) key)) :A)]
+        (for [x (range 7)]
+          (if (>= x octave-switch-index)
+            (note-from-tonal-pitch-class (get key x) (inc starting-octave))
+            (note-from-tonal-pitch-class (get key x) starting-octave))))))
+  )

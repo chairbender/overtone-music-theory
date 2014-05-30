@@ -5,7 +5,7 @@
 ;unlike with standard pitch classes.
 
 
-(ns music-theory.tonal-pitch-class
+(ns music-theory.tonal-theory.tonal-pitch-class
   (:use clojure.set))
 
 
@@ -116,7 +116,6 @@
   "Returns the alterations of the tonal pitch class
   as a string. Empty string if none."
   [tonal-pitch-class]
-  (or (re-find #"[#b]+" (name (normalize-tonal-pitch-class tonal-pitch-class))) "")
-  )
+  (or (re-find #"[#b]+" (name (normalize-tonal-pitch-class tonal-pitch-class))) ""))
 
 

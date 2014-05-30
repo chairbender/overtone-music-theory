@@ -11,9 +11,9 @@
 ;But, if we are following tonal theory, the choice of which tonal-pitch-class a given
 ;pitch should be referred to by is based on the diatonic collection described by the key signature
 ;that the pitch is being played in.
-(ns music-theory.diatonic-collection
-  (:use music-theory.tonal-pitch-class)
-  (:use music-theory.key-signature))
+(ns music-theory.tonal-theory.diatonic-collection
+  (:use music-theory.tonal-theory.tonal-pitch-class)
+  (:use music-theory.tonal-theory.key-signature))
 
 (defn diatonic-collection
 	"Returns a diatonic collection as a vector of the

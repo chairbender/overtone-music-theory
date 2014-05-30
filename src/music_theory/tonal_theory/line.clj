@@ -6,7 +6,7 @@
 ;lines are simply represented as vectors containing 'line-notes', where a line note
 ;is a map containing a :note and :dur entry (which have a note keyword and duration fraction, respectively)
 
-(ns music-theory.line)
+(ns music-theory.tonal-theory.line)
 
 (defn line-note
   "Returns a line note given a note and duration.
@@ -68,6 +68,17 @@
 (defn line-duration
   "Returns the total duration of the line as a fraction"
   [line]
-  (reduce #(+ %1 (:dur %2)) (:dur (get line 0)) (subvec line 1 (count line)))
-  )
+  (reduce #(+ %1 (:dur %2)) (:dur (get line 0)) (subvec line 1 (count line))))
+
+(defn subline
+  "like subvec, but operates on lines.
+  Returns a new line consisting of the notes between
+  start (inclusive) and end (exclusive)"
+  [line start end]
+  (subvec line start end))
+
+(defn line-note-count
+  "returns the number of notes in the line"
+  [line]
+  (count line))
 

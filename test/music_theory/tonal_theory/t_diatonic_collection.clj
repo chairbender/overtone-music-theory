@@ -1,6 +1,6 @@
-(ns music-theory.t-diatonic-collection
+(ns music-theory.tonal-theory.t-diatonic-collection
 	(:use midje.sweet)
-	(:use music-theory.diatonic-collection))
+	(:use music-theory.tonal-theory.diatonic-collection))
 
 (facts "about `diatonic-collection`"
 			 (fact "Returns a diatonic collection as a vector of the pitch classes making up the collection,

@@ -2,7 +2,7 @@
 ;context of music
 ;Duration symbols are represented as
 
-(ns music-theory.time)
+(ns music-theory.tonal-theory.time)
 
 
 
