@@ -62,12 +62,51 @@
             higher-note (higher-note arpeggiate-note (:note target-line-note))]
         (if up?
           (replace-line rearticulated-line
-                        [(line-note lower-note first-duration)
-                         (line-note higher-note (- (:dur target-line-note) first-duration))]
+                        (line lower-note first-duration
+                              higher-note (- (:dur target-line-note) first-duration))
                         index (inc index))
           (replace-line rearticulated-line
-                        [(line-note higher-note first-duration)
-                         (line-note lower-note (- (:dur target-line-note) first-duration))]
+                        (line higher-note first-duration
+                              lower-note (- (:dur target-line-note) first-duration))
                         index (inc index)
                         ))))))
+
+(defn step-motion
+  "Given a line and an index into the line that points at the first note
+  of an arpeggiation, and a step-motion line,
+  performs the step motion between the notes of the arpeggiation,
+  using the notes in the step-motion line as if they are borrowed from the duration
+  of the indexed note (so the indexed note will still be in the new line but it will be shorter
+  by the duration of the step-motion line). The step-motion line must
+  consist of notes going all up or all down, whose total duration must be less than the duration
+  of the indexed note, with each note being some sort of 2nd interval from
+  the preceeding note, and the notes must 'step' between the note in the line
+  at the index and the one following it (the first note of the line
+  must be a 2nd from the first note of the arpeggiation, and the last note
+  of the line must be a 2nd from the last note of the arpeggiation. In other words, a step-motion causes
+  a bunch of notes to be inserted between two notes forming an arpeggiation."
+  [target-line index step-motion]
+  (let [indexed-line-note (line-note-at target-line index)]
+    (replace-line
+      target-line
+      (prepend-line-note (line-note (:note indexed-line-note) (- (:dur indexed-line-note) (line-duration step-motion))) step-motion)
+      index
+      )))
+
+(defn delay
+  "Given a line and index into that line, returns a new line where the
+  note at that indexed is delayed, adding some of the duration of the first part of
+  the indexed note to the duration of the note before it. duration indicates the duration to transfer,
+  so a value of 1/2 would shorten the duration of the indexed note by 1/2 and add 1/2 to the duration of the
+  note before it. duration must be less than the duration of the indexed note."
+  [target-line index duration]
+  (let
+      [lengthened-note (line-note-at target-line index)
+       shortened-note (line-note-at target-line (inc index))]
+      (replace-line
+    target-line
+    (line (:note lengthened-note) (+ (:dur lengthened-note) duration)
+          (:note shortened-note) (- (:dur shortened-note) duration))
+    index
+    (inc index))))
 

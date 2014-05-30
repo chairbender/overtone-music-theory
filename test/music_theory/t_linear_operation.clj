@@ -78,3 +78,19 @@
                (line :A4 1 :C4 1 :D4 1)
                1 false :G3 1/2) => (line :A4 1 :C4 1/2 :G3 1/2 :D4 1)
              ))
+
+(facts "about `step-motion`"
+       (fact "inserts the step-motion line at the given index, borrowing from the duration of the note
+       at that index."
+             (step-motion
+               (line :A4 1 :B4 1 :F4 1)
+               1
+               (line :C4 1/4 :D4 1/4 :E4 1/4)
+               ) => (line :A4 1 :B4 1/4 :C4 1/4 :D4 1/4 :E4 1/4 :F4 1)
+
+             (step-motion
+               (line :A4 1 :E4 1 :F4 1)
+               0
+               (line :B4 1/4 :C4 1/4 :D4 1/4)
+               ) => (line :A4 1/4 :B4 1/4 :C4 1/4 :D4 1/4 :E4 1 :F4 1)
+             ))

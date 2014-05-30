@@ -59,3 +59,15 @@
   [line index]
   (get line index))
 
+(defn prepend-line-note
+  "Prepends the line note to the line"
+  [line-note line]
+  (into [line-note] line)
+  )
+
+(defn line-duration
+  "Returns the total duration of the line as a fraction"
+  [line]
+  (reduce #(+ %1 (:dur %2)) (:dur (get line 0)) (subvec line 1 (count line)))
+  )
+

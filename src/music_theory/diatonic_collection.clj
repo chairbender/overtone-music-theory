@@ -18,7 +18,7 @@
 (defn diatonic-collection
 	"Returns a diatonic collection as a vector of the
 	pitch classes making up the collection,
-	formed by starting on the given pitch class.
+	formed when tonic-tonal-pitch-class is the tonic.
 	Where two pitch classes are equivalent (like D# and Eb), the
 	pitch class chosen will be the one whose accidental appears in the key
 	signature that describes that diatonic collection. For the special case of F,
@@ -27,22 +27,22 @@
 	which is preferrable). One way to think about it is -
 	the key signature for a given starting note is equivalent to the key signature for the
 	major scale starting on that note."
-	[tonal-pitch-class]
-	(if (or (tonal-pitch-class-equals tonal-pitch-class :F)
-					(> (flats tonal-pitch-class) 0))
+	[tonic-tonal-pitch-class]
+	(if (or (tonal-pitch-class-equals tonic-tonal-pitch-class :F)
+					(> (flats tonic-tonal-pitch-class) 0))
 		;flats
-		(let [flats-map (flats-in-signature tonal-pitch-class)]
+		(let [flats-map (flats-in-signature tonic-tonal-pitch-class)]
 		(map #(flattify % (flats-map %))
-			(loop [result-vector [(natural tonal-pitch-class)]]
-				(if (= (next-natural-tonal-pitch-class (last result-vector)) (natural tonal-pitch-class))
+			(loop [result-vector [(natural tonic-tonal-pitch-class)]]
+				(if (= (next-natural-tonal-pitch-class (last result-vector)) (natural tonic-tonal-pitch-class))
 					result-vector
 					(recur (conj result-vector (next-natural-tonal-pitch-class (last result-vector))))
 					))))
 		;sharps
-		(let [sharps-map (sharps-in-signature tonal-pitch-class)]
+		(let [sharps-map (sharps-in-signature tonic-tonal-pitch-class)]
 		(map #(sharpen % (sharps-map %))
-			(loop [result-vector [(natural tonal-pitch-class)]]
-				(if (= (next-natural-tonal-pitch-class (last result-vector)) (natural tonal-pitch-class))
+			(loop [result-vector [(natural tonic-tonal-pitch-class)]]
+				(if (= (next-natural-tonal-pitch-class (last result-vector)) (natural tonic-tonal-pitch-class))
 					result-vector
 					(recur (conj result-vector (next-natural-tonal-pitch-class (last result-vector))))
 					))))
