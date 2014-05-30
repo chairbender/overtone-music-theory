@@ -28,7 +28,8 @@
 	the key signature for a given starting note is equivalent to the key signature for the
 	major scale starting on that note."
 	[tonal-pitch-class]
-	(if (or (tonal-pitch-class-equals tonal-pitch-class :F)
+	(vec
+    (if (or (tonal-pitch-class-equals tonal-pitch-class :F)
 					(> (flats tonal-pitch-class) 0))
 		;flats
 		(let [flats-map (flats-in-signature tonal-pitch-class)]
@@ -46,4 +47,4 @@
 					result-vector
 					(recur (conj result-vector (next-natural-tonal-pitch-class (last result-vector))))
 					))))
-		))
+		)))

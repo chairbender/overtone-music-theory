@@ -59,3 +59,16 @@
   integer octave."
   [letter alterations octave]
   (keyword (str letter alterations octave)))
+
+(defn note-from-tonal-pitch-class
+  "Creates a note from a tonal pitch class, given an octave"
+  [tonal-pitch-class octave]
+  (note (tonal-pitch-class-letter tonal-pitch-class)
+        (tonal-pitch-class-alterations tonal-pitch-class)
+        octave)
+  )
+
+(defn tonal-pitch-class-from-note
+  "Returns the tonal pitch class keyword by simply removing the octave from the note"
+  [note]
+  (keyword (str (note-letter note) (note-alterations note))))

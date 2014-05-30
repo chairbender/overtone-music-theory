@@ -9,6 +9,7 @@
   (:use clojure.set))
 
 
+
 (def ^{:private true :doc "Map from one natural tonal-pitch-class to the next natural pitch class"}
   next-natural-tonal-pitch-class-map (hash-map :A :B :B :C :C :D :D :E :E :F :F :G :G :A))
 (def ^{:private true :doc "Map from one natural tonal-pitch-class to the previous natural pitch class"}
@@ -107,7 +108,7 @@
 
 
 (defn tonal-pitch-class-letter
-  "Returns the letter of the tonal pitch class."
+  "Returns the letter of the tonal pitch class as a char"
   [tonal-pitch-class]
   (let [normal-pitch-class (normalize-tonal-pitch-class tonal-pitch-class)] (.charAt (name normal-pitch-class) 0)))
 

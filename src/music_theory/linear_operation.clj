@@ -93,7 +93,7 @@
       index
       )))
 
-(defn delay
+(defn delay-note
   "Given a line and index into that line, returns a new line where the
   note at that indexed is delayed, adding some of the duration of the first part of
   the indexed note to the duration of the note before it. duration indicates the duration to transfer,

@@ -1,4 +1,5 @@
-;Handles stuff involving key signatures
+;Handles stuff involving key signatures -more focusing on the accidentals in the signature than the notes
+;in the signatures. see key.clj for stuff that's more focused on the notes and modes and things like that
 (ns music-theory.key-signature
 	(:use music-theory.tonal-pitch-class))
 
