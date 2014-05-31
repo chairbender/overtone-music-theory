@@ -78,7 +78,8 @@
             ending-note (get scale 0)]
         (full-diatonic-step-motion key-vector starting-note ending-note))))
 
-(defn- valid-neighbor-indexes
+
+(defn valid-neighbor-indexes
   "Returns an array containing the indexes of
   notes in the line that are repetitions of the same pitch (the index of the first note
   of the repetition). Durations are not considered when considering valid neighbor
@@ -92,51 +93,60 @@
           i
           -1)))))
 
-(defn random-neighbor
-  "Given a line, performs a random neighbor operation on
-   consecutive notes that have a repeated pitch within the counterpoint
-  rules (the neighbor is always a member of the diatonic collection except
-  when it is the lower neighbor to the tonic in a minor key, in which case it is altered
-  so as to be a minor second from the tonic. The duration of the neighbor is chosen to always
-  be half of the duration of the neighbored note
-  Key-vector is the key vector of the key the line is in. target-line is the
-  line to perform the operation on. Returns key-vector unmodified
-   if there is no valid pitch repetition to neighbor."
-  [key-vector target-line]
-  (let
-      [valid-indexes (valid-neighbor-indexes target-line)]
 
-      (let [target-index (get valid-indexes (rand-int (line-note-count valid-indexes)))
-        up? (rand-bool)]
-    (let [target-line-note (line-note-at target-line target-index)
-          direction (if up? 1 -1)]
+(defn- triad-pitches-near
+  "returns a vector containing the triad pitches of the key that are within
+  an octave of the note"
+  [note key-vector]
+  (vec
+    (filter
+      #(not (nil? %))
+      (for [cur-scale-index (range (- (scale-index key-vector note) 7) (+ (scale-index key-vector note) 8))]
+        (when (contains? #{1 3 5} (note-degree key-vector (note-at-scale-index key-vector cur-scale-index)) )
+          (note-at-scale-index key-vector cur-scale-index))))))
 
-      (if (nil? target-line-note)
-        ;return target line if no valid indexes to neighbor
-        target-line
+(defn- valid-triad-inserts-before
+  "Returns avector containing the notes
+  that would be valid to insert before the note at
+  the given index"
+  [target-line key-vector index]
+  (let [line-note-before (if (= index 0) (line-note-at target-line index)(line-note-at target-line (dec index)))
+        line-note-after (line-note-at target-line index)]
+    ;generate the nearest triad pitches
+    (let [triad-pitches (triad-pitches-near (:note line-note-before) key-vector)]
+      ;check for consonance with both notes
+      (vec
+        (filter
+          #(not (nil? %))
+          (for [i (range (count triad-pitches))]
+            ;true for is lowest sounding for the purposes of counterpoint
+            (when (and
+                    (consonant? (compound-interval-keyword (get triad-pitches i) (:note line-note-before)) true)
+                    (consonant? (compound-interval-keyword (get triad-pitches i) (:note line-note-after)) true)
+                    (<= (interval-number (interval-keyword (get triad-pitches i) (:note line-note-after))) 8))
+              (get triad-pitches i))))))))
 
-        (let
-          [target-note-scale-index (scale-index key-vector (:note target-line-note))]
+(defn valid-triad-inserts
+  "Returns a map of integers to vectors, where
+  each integer represents an index in target-line (of a note), and
+  the vector it maps to indicates the ntoes that could be inserted
+  BEFORE that note,, following the rules of tonal theory counterpoint.
+  target-line is the line to examine and key-vector is the
+  kev-vector for the key that the target line is in.
+  The rules are:
 
-          (if (and (not up?)
-                   (= 1 (note-degree key-vector (:note target-line-note)))
-                   (= :minor (key-mode key-vector)))
-            (neighbor
-              target-line
-              target-index
-              false
-              :m2
-              (* 1/2 (:dur target-line-note)))
-
-            (neighbor
-              target-line
-              target-index
-              up?
-              (interval-keyword
-                (:note target-line-note)
-                (note-at-scale-index key-vector (+ direction target-note-scale-index)))
-              (* 1/2 (:dur target-line-note)))
-
-      )))))))
-
-
+  Any triad pitch may precede the first pitch or be inserted between
+  two consecutive pitches as long as no dissonant skip and no skip larger than
+  an octave is created (and we'll consider a perfect fourth skip in an upper line
+  to be consonant)."
+  [target-line key-vector]
+  (apply hash-map
+    (filter
+      #(not (nil? %))
+      (for [i (range (line-note-count target-line))
+          output-index? [true false]]
+        (let [valid-inserts (valid-triad-inserts-before target-line key-vector i)]
+          (when (not-empty valid-inserts)
+            (if output-index?
+              i
+              valid-inserts)))))))

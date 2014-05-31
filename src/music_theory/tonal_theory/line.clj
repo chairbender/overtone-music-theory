@@ -65,6 +65,12 @@
   (into [line-note] line)
   )
 
+(defn append-line-note
+  "appends the line note to the line"
+  [line-note line]
+  (conj line line-note)
+  )
+
 (defn line-duration
   "Returns the total duration of the line as a fraction"
   [line]
@@ -81,4 +87,14 @@
   "returns the number of notes in the line"
   [line]
   (count line))
+
+(defn insert-line
+  "inserts a line starting at the given index, moving the
+  note at that current index forward to accomadate the inseted line."
+  [target-line inserted-line index]
+  (let [moved-line-note (line-note-at target-line index)]
+    (replace-line
+      target-line
+      (append-line-note moved-line-note inserted-line)
+      index)))
 

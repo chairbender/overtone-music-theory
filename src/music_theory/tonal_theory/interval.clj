@@ -30,7 +30,7 @@
     (not (nil? (re-find #"[daPMm]+\d+" (name interval))))
     (let
       [adjusted-interval-number (if (>= (interval-number-unchecked interval) 8)
-                                  (mod (interval-number-unchecked interval) 7)
+                                  (inc (mod (dec (interval-number-unchecked interval)) 7))
                                   (interval-number-unchecked interval))]
     (or
     (and
