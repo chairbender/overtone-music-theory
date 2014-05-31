@@ -24,6 +24,8 @@
 
 
 
+
+
 (defn neighbor
   "Given a line an an index pointing at the first note of a rearticulation in that line, returns the line
   with a neighbor inserted between the rearticulation notes. A neighbor is simply a note a minor or major second

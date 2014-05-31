@@ -5,22 +5,10 @@
   (:use music-theory.tonal-theory.interval)
   (:use music-theory.tonal-theory.key)
   (:use music-theory.tonal-theory.note)
-  (:use music-theory.tonal-theory.tonal-pitch-class))
-
-(defn- note-letter-difference
-  "Returns the difference between the note letters (first-note - second-note)
-   (so it is negative if the second note is higher than the second note), considering octave.
-  So A4 C4 is 2, A4 C5 is 10, C#5 Abb4 is -10."
-  [first-note second-note]
-  (let [interval-num (interval-number (compound-interval-keyword first-note second-note))
-        direction (if (= second-note (higher-note first-note second-note)) -1 1)
-        octaves (Math/abs (interval-octaves first-note second-note))]
-    ;have to have different behavior when
-    ;interval num is 8 because compound interval returns
-    ;8 for the interval number instead of 1
-    (if (= interval-num 8)
-      (* direction octaves 7)
-      (* direction (+ (* octaves 7) (dec interval-num))))))
+  (:use music-theory.tonal-theory.tonal-pitch-class)
+  (:use music-theory.tonal-theory.linear-operation)
+  (:use music-theory.tonal-theory.tonal-utility)
+  (:use music-theory.utility))
 
 (defn- full-diatonic-step-motion
   "For a given key, starting note, and ending note,
@@ -89,5 +77,66 @@
                         (interval-above (get scale 0) :P8))
             ending-note (get scale 0)]
         (full-diatonic-step-motion key-vector starting-note ending-note))))
+
+(defn- valid-neighbor-indexes
+  "Returns an array containing the indexes of
+  notes in the line that are repetitions of the same pitch (the index of the first note
+  of the repetition). Durations are not considered when considering valid neighbor
+  indexes."
+  [target-line]
+  (vec
+    (filter
+      #(not= % -1)
+      (for [i (range (dec (line-note-count target-line)))]
+        (if (= (:note (line-note-at target-line i)) (:note (line-note-at target-line (inc i))))
+          i
+          -1)))))
+
+(defn random-neighbor
+  "Given a line, performs a random neighbor operation on
+   consecutive notes that have a repeated pitch within the counterpoint
+  rules (the neighbor is always a member of the diatonic collection except
+  when it is the lower neighbor to the tonic in a minor key, in which case it is altered
+  so as to be a minor second from the tonic. The duration of the neighbor is chosen to always
+  be half of the duration of the neighbored note
+  Key-vector is the key vector of the key the line is in. target-line is the
+  line to perform the operation on. Returns key-vector unmodified
+   if there is no valid pitch repetition to neighbor."
+  [key-vector target-line]
+  (let
+      [valid-indexes (valid-neighbor-indexes target-line)]
+
+      (let [target-index (get valid-indexes (rand-int (line-note-count valid-indexes)))
+        up? (rand-bool)]
+    (let [target-line-note (line-note-at target-line target-index)
+          direction (if up? 1 -1)]
+
+      (if (nil? target-line-note)
+        ;return target line if no valid indexes to neighbor
+        target-line
+
+        (let
+          [target-note-scale-index (scale-index key-vector (:note target-line-note))]
+
+          (if (and (not up?)
+                   (= 1 (note-degree key-vector (:note target-line-note)))
+                   (= :minor (key-mode key-vector)))
+            (neighbor
+              target-line
+              target-index
+              false
+              :m2
+              (* 1/2 (:dur target-line-note)))
+
+            (neighbor
+              target-line
+              target-index
+              up?
+              (interval-keyword
+                (:note target-line-note)
+                (note-at-scale-index key-vector (+ direction target-note-scale-index)))
+              (* 1/2 (:dur target-line-note)))
+
+      )))))))
 
 

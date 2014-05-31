@@ -4,7 +4,8 @@
   (:use music-theory.tonal-theory.diatonic-collection)
   (:use music-theory.tonal-theory.note)
   (:use music-theory.tonal-theory.tonal-pitch-class)
-  (:use music-theory.tonal-theory.interval))
+  (:use music-theory.tonal-theory.interval)
+  (:use music-theory.tonal-theory.tonal-utility))
 
 (defn- rotate-key-vector
   "rotates the vector forward by the given offset, for example, if the vector is
@@ -36,6 +37,28 @@
       (rotate-key-vector relative-major 2)
       )))
 
+(defn key-tonic
+  "returns the tonic tonal pitch class of the key vector"
+  [key-vector]
+  (get key-vector 0))
+
+(defn key-mode
+  "returns the mode of the key vector as :major or :minor"
+  [key-vector]
+  (if (= :m3
+        (interval-keyword
+          (note-from-tonal-pitch-class (get key-vector 0) 4)
+          (note-from-tonal-pitch-class (get key-vector 2) 4)))
+    :minor
+    :major
+    ))
+
+(defn note-degree
+  "given a note and a key vector, return the degree of the note in the key
+  as an integer from 1-7 (inclusive). note must have a tonal pitch class of one of the key's diatonic degrees."
+  [key-vector note]
+  (inc (.indexOf key-vector (tonal-pitch-class-from-note note))))
+
 (defn scale
   "Given a key vector and starting octave,
   returns a vector of 7 notes representing the single-octave scale of the
@@ -50,4 +73,26 @@
           (if (>= x octave-switch-index)
             (note-from-tonal-pitch-class (get key x) (inc starting-octave))
             (note-from-tonal-pitch-class (get key x) starting-octave))))))
+  )
+
+
+(defn scale-index
+  "Given a key vector and a note, returns that note's
+  'scale index' for the scale of that key. the note must
+  be in the scale.
+  The scale index is defined to be 0 at octave 0 of the tonic (IO), then
+  1, 2, 3, and so on at II0 III0 IV0. -1, -2, and so on
+  corresponds to VII-1, VI-1 and so on."
+  [key-vector note]
+  (note-letter-difference note (get (scale key-vector 0) 0) ))
+
+(defn note-at-scale-index
+  "Given a key-vector and scale index, returns the
+  note that would be at that scale index."
+  [key-vector index]
+
+  (get
+    (scale key-vector (if (>= index 0) (quot index 7) (dec (quot index 7))))
+    (mod index 7))
+
   )
