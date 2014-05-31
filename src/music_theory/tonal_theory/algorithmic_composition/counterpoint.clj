@@ -20,7 +20,7 @@
     ;8 for the interval number instead of 1
     (if (= interval-num 8)
       (* direction octaves 7)
-      (* direction (+ (* octaves 7) interval-num)))))
+      (* direction (+ (* octaves 7) (dec interval-num))))))
 
 (defn- full-diatonic-step-motion
   "For a given key, starting note, and ending note,
@@ -36,7 +36,7 @@
         ;as an offset from the key vector index (so in the key of C, the note C has a
         ;a key vector index of 0, but it is actually 2 notes above a, so key-index + a-offset should be 2)
         a-offset (- (int (tonal-pitch-class-letter (get key 0))) (int \A))]
-    (let [ending-index (+ starting-index (note-letter-difference ending-note starting-note))]
+    (let [ending-index (+ starting-index (note-letter-difference ending-note starting-note) direction)]
       (apply line
              (flatten
                (for [i (range starting-index ending-index direction)]
@@ -61,20 +61,33 @@
     (subline full-step-motion 1 (dec (line-note-count full-step-motion)))))
 
 
-;
-;(defn basic-step-motion
-;  "Given a scale (use the scale function in key.clj),
-;  returns a line that follows the operational rules:
-;
-;  1. The final pitch in the basic step motion must be a tonic.
-;  2. The first pitch must be a tonic triad member a thrid fifth or octave
-;  above the final pitch.
-;  3. These two pitches must be joined by inserting the pitches of intervening diatonic degrees to form
-;  a descending step motion.
-;
-;  scale is the scale to use (a vector of 7 notes comprising the scale). first-note-interval-number
-;  is either 3, 5, or 8 (representing the first note being a 3rd, fifth, or octave above the tonic)."
-;  [scale first-note-interval-number]
-;  (+ 1 1))
+
+(defn basic-step-motion
+  "Given a key and starting octave (use the scale function in key.clj),
+  returns a line that follows the operational rules:
+
+  1. The final pitch in the basic step motion must be a tonic.
+  2. The first pitch must be a tonic triad member a thrid fifth or octave
+  above the final pitch.
+  3. These two pitches must be joined by inserting the pitches of intervening diatonic degrees to form
+  a descending step motion.
+
+  key-vector is the key to use (a vector of 7 tonal pitch classes). octave is the octave
+  to play the ending tonic on. first-note-interval-number
+  is either 3, 5, or 8 (representing the first note being a major or minor 3rd (based on the key being major or minor), perfect fifth, or perfect octave above the tonic)."
+  [key-vector octave first-note-interval-number]
+  (let [scale (scale key-vector octave)]
+
+      (let [starting-note (cond
+                        (= first-note-interval-number 3)
+                        (get scale 2)
+
+                        (= first-note-interval-number 5)
+                        (get scale 4)
+
+                        (= first-note-interval-number 8)
+                        (interval-above (get scale 0) :P8))
+            ending-note (get scale 0)]
+        (full-diatonic-step-motion key-vector starting-note ending-note))))
 
 
