@@ -72,3 +72,28 @@
             chosen-note (rand-nth (get chosen-entry 1))]
         (insert-line
           target-line (line chosen-note 1) chosen-index)))))
+
+(defn random-step-motion-insert
+  "Inserts a step motion between two random consecutive notes that form a skip.
+  Uses the diatonic degrees for the step motion except for the following
+  rules, where it uses the raised sixth and seventh degrees in a minor key:
+  a) a rising step motion from the fifth degree to the tonic
+  b) a rising step motion from the fifth degree to the seventh
+  c) a falling step motion from the raised seventh to the fifth
+
+  does nothing if the target line has no valid places to do the insert
+  "
+  [target-line key-vector]
+  (let [valid-indexes (valid-step-motion-inserts target-line)]
+    (if (> (count valid-indexes) 0)
+      (let [chosen-index (rand-nth valid-indexes)]
+        (replace-line
+          target-line
+          (counterpoint-upper-step-motion
+            (:note (line-note-at target-line chosen-index))
+            (:note (line-note-at target-line (inc chosen-index)))
+            key-vector)
+          chosen-index
+          (inc chosen-index)))
+      target-line)))
+

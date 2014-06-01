@@ -45,19 +45,6 @@
 					accidental))])))
 		)))
 
-(defn sharpen
-	"Adds the passed number of sharps to the passed
-	pitch class keyword and returns that as a new keyword.
-	If nil is passed for num-sharps, returns the tonal-pitch-class unmodified."
-	[tonal-pitch-class num-sharps]
-	(accidentalify (normalize-tonal-pitch-class tonal-pitch-class) num-sharps "#"))
-
-(defn flattify
-	"Adds the passed number of flats to the passed
-	pitch class keyword and returns that as a new keyword.
-	If nil is passed for num-flats, returns the tonal-pitch-class unmodified."
-	[tonal-pitch-class num-flats]
-	(accidentalify (normalize-tonal-pitch-class tonal-pitch-class) num-flats "b"))
 
 (defn flats
   "Counts the number of flats in the tonal-pitch-class and returns the count"
@@ -68,6 +55,35 @@
   "Counts the number of sharps in the tonal-pitch-class and returns the count"
   [tonal-pitch-class]
   (count (filter #{\#} (name (normalize-tonal-pitch-class tonal-pitch-class)))))
+
+(defn sharpen
+	"Adds the passed number of sharps to the passed
+	pitch class keyword and returns that as a new keyword.
+	If nil is passed for num-sharps, returns the tonal-pitch-class unmodified."
+	[tonal-pitch-class num-sharps]
+	(accidentalify (normalize-tonal-pitch-class tonal-pitch-class) num-sharps "#"))
+
+(defn unsharpen
+  "removes the passed number of sharps from the tonal-pitch-class. requires that the pitch class actually
+  has >= num-sharps."
+  [tonal-pitch-class num-sharps]
+  (let [prev-num-sharps (sharps tonal-pitch-class)]
+    (sharpen (natural tonal-pitch-class) (- prev-num-sharps num-sharps))))
+
+(defn flattify
+	"Adds the passed number of flats to the passed
+	pitch class keyword and returns that as a new keyword.
+	If nil is passed for num-flats, returns the tonal-pitch-class unmodified."
+	[tonal-pitch-class num-flats]
+	(accidentalify (normalize-tonal-pitch-class tonal-pitch-class) num-flats "b"))
+
+(defn unflattify
+  "removes the passed number of flats from the tonal-pitch-class. requires that the pitch class actually
+  has >= num-flats."
+  [tonal-pitch-class num-flats]
+  (let [prev-num-flats (flats tonal-pitch-class)]
+    (flattify (natural tonal-pitch-class) (- prev-num-flats num-flats))))
+
 
 (defn tonal-pitch-class-equals
   "True if they represent the same pitch class.

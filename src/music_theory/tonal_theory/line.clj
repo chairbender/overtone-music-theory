@@ -98,3 +98,20 @@
       (append-line-note moved-line-note inserted-line)
       index)))
 
+(defn modify-note-at
+  "Returns a new line caused by replacing the note
+   in the target-line at the passed index with the result of invoking the modify-function
+   on that note (not the duration, just the note keyword). the duration
+   of the note is preserved.
+    modify-function must be a function that takes a note keyword and returns
+    a note keyword.
+  "
+  [modify-function target-line index]
+  (replace-line
+    target-line
+    (line
+      (modify-function (:note (line-note-at target-line index)))
+      (:dur (line-note-at target-line index))
+      )
+    index))
+

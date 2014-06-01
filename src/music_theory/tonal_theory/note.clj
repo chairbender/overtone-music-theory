@@ -68,7 +68,40 @@
         octave)
   )
 
+
 (defn tonal-pitch-class-from-note
   "Returns the tonal pitch class keyword by simply removing the octave from the note"
   [note]
   (keyword (str (note-letter note) (note-alterations note))))
+
+(defn raise
+  "raises the note a half step by removing a flat or adding a sharp"
+  [note]
+  (let [normal-note (normalize-note note)]
+    (let [tpc (note-tonal-pitch-class normal-note)]
+      (cond
+
+        (> (sharps tpc) 0)
+        (note-from-tonal-pitch-class (sharpen tpc 1) (note-octave normal-note))
+
+        (> (flats tpc) 0)
+        (note-from-tonal-pitch-class (unflattify tpc 1) (note-octave normal-note))
+
+        :else
+        (note-from-tonal-pitch-class (sharpen tpc 1) (note-octave normal-note))))))
+
+(defn lower
+  "opposite of raise"
+  [note]
+  (let [normal-note (normalize-note note)]
+    (let [tpc (note-tonal-pitch-class normal-note)]
+      (cond
+
+        (> (sharps tpc) 0)
+        (note-from-tonal-pitch-class (unsharpen tpc 1) (note-octave normal-note))
+
+        (> (flats tpc) 0)
+        (note-from-tonal-pitch-class (flattify tpc 1) (note-octave normal-note))
+
+        :else
+        (note-from-tonal-pitch-class (flattify tpc 1) (note-octave normal-note))))))

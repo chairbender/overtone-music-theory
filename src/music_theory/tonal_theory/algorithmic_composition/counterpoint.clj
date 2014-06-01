@@ -150,3 +150,56 @@
             (if output-index?
               i
               valid-inserts)))))))
+
+(defn valid-step-motion-inserts
+  "Returns a vector containing the indexes of notes where the
+  following note forms a skip (interval a 3rd or larger) with the indexed note."
+  [target-line]
+  (vec
+    (filter
+      #(not (nil? %))
+      (for [i (range (dec (line-note-count target-line)))]
+        (when ( > (interval-number (interval-keyword
+                                 (:note (line-note-at target-line i))
+                                 (:note (line-note-at target-line (inc i))))) 2)
+          i)))))
+
+(defn counterpoint-upper-step-motion
+  "Returns a step motion line starting on the
+  first note and ending on the second (all notes being a whole note),
+  following the rules for upper line step motion:
+  uses the diatonic degrees except for the special cases
+  where it uses the raised sixth or seventh degree in a minor key:
+  a) a rising step motion from the fifth degree to the tonic
+  b) a rising step motion from the fifth degree to the seventh
+  c) a falling step motion from the raised seventh to the fifth"
+  [starting-note ending-note key-vector]
+  (let [diatonic-motion (full-diatonic-step-motion key-vector starting-note ending-note)]
+    (cond
+      ;rising motion from fifth to tonic, and minor
+      (and (= (higher-note starting-note ending-note) ending-note)
+           (= 5 (note-degree key-vector starting-note))
+           (= 1 (note-degree key-vector ending-note))
+           (= :minor (key-mode key-vector)))
+      ;raise the sixth and seventh
+      (modify-note-at raise
+        (modify-note-at raise diatonic-motion 1) 2)
+
+      ;rising motion from fifth to seventh, and minor
+      (and (= (higher-note starting-note ending-note) ending-note)
+           (= 5 (note-degree key-vector starting-note))
+           (= 7 (note-degree key-vector ending-note))
+           (= :minor (key-mode key-vector)))
+      ;raise the sixth
+      (modify-note-at raise diatonic-step-motion 1)
+
+      ;falling motion from teh raised seventh to the fifth, and minor
+      (and (= (higher-note starting-note ending-note) starting-note)
+           (= 7 (note-degree key-vector (lower starting-note)))
+           (= 5 (note-degree key-vector ending-note))
+           (= :minor (key-mode key-vector)))
+      ;raise the sixth
+      (modify-note-at raise diatonic-step-motion 1)
+
+      :else
+      diatonic-motion)))
