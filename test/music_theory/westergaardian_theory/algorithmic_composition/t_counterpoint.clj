@@ -39,7 +39,7 @@
               ))
 
 (facts "about `basic-step-motion`"
-       (fact "returns the basic step motion of counterpoint in tonal theory"
+       (fact "returns the basic step motion of counterpoint in westergaardian theory"
              (basic-step-motion (key-vector :C :major)
                                 4
                                 3) => (line

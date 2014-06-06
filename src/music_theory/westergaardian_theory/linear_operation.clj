@@ -50,12 +50,12 @@
 
 (defn arpeggiate
   "Given a line, an index into that line, and a note forming a consonant interval
-  with the note at that index (tonal theory consonance), returns a new line with
+  with the note at that index (westergaardian theory consonance), returns a new line with
   an arpeggiation performed at that index using the given note, where arpeggiation
   note durations equals the original note's duration, and the duration of the first
   note equals first-duration. up? indicates whether the arpeggiation should go from low
   note to high note or vice versa. first-duration must be less than the duration of the note
-  at the given index in the line. arpeggiate-note must form a tonal theory consonant interval
+  at the given index in the line. arpeggiate-note must form a westergaardian theory consonant interval
   (see the consonant? function in interval.clj)."
   [target-line index up? arpeggiate-note first-duration]
   (let [target-line-note (line-note-at target-line index)]

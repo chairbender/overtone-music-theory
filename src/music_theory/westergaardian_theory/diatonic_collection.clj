@@ -8,7 +8,7 @@
 ;use the scale function to represent the concept of a diatonic collection.
 ;Given a midi note with two possible pitch classes (like D# and Eb),
 ;overtone always picks the same pitch class when calling note-info on that note.
-;But, if we are following tonal theory, the choice of which tonal-pitch-class a given
+;But, if we are following westergaardian theory, the choice of which tonal-pitch-class a given
 ;pitch should be referred to by is based on the diatonic collection described by the key signature
 ;that the pitch is being played in.
 (ns music-theory.westergaardian-theory.diatonic-collection

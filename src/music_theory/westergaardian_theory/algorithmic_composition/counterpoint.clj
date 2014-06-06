@@ -1,4 +1,4 @@
-;functions for doing counterpoint using tonal theory methods
+;functions for doing counterpoint using westergaardian theory
 
 (ns music-theory.westergaardian-theory.algorithmic-composition.counterpoint
   (:use music-theory.westergaardian-theory.line)
@@ -137,7 +137,7 @@
   "Returns a map of integers to vectors, where
   each integer represents an index in target-line (of a note), and
   the vector it maps to indicates the ntoes that could be inserted
-  BEFORE that note,, following the rules of tonal theory counterpoint.
+  BEFORE that note,, following the rules of westergaardian theory counterpoint.
   target-line is the line to examine and key-vector is the
   kev-vector for the key that the target line is in.
   The rules are:
