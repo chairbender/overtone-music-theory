@@ -115,3 +115,9 @@
       )
     index))
 
+(defn set-all-durations
+  "sets all durations of the notes in the line to the passed duration"
+  [target-line duration]
+  (vec (map #(hash-map :note (:note %) :dur duration)
+            target-line)))
+

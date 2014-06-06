@@ -78,12 +78,48 @@
             ending-note (get scale 0)]
         (full-diatonic-step-motion key-vector starting-note ending-note))))
 
-;(defn basic-arpeggiation
-;  "Generates a basic arpeggiation for the bass line, using the operation rules
-;  of Tonal Theory. Final and first pitch must be tonics. The middle pitch must be
-;  a fifth above or fourth below the final tonic. If the middle pitch is more than
-;  a fifth from the first pitch, a triad pitch must be inserted between the middle pitch and first pitch.
-;  The rules of tonal theory are unspecified ")
+(defn basic-arpeggiation
+  "Generates a basic arpeggiation for the bass line, using the operation rules
+  of Tonal Theory. Final and first pitch must be tonics. The middle pitch must be
+  a fifth above or fourth below the final tonic. If the middle pitch is more than
+  a fifth from the first pitch, a triad pitch must be inserted between the middle pitch and first pitch to
+  make there be no intervals larger than an octave, but that
+  insertion must follow the rules for bass line secondary structure triad inserts.
+  The starting and ending pitches can't be larger than an octave, since that is undefined
+  by westergaardian theory (triad ptiches are supposed to be inserted, but no operation could
+  be performed because any triad pitch insertion would create a skip larger than an octave
+  with one of the notes in the event the middle note is chosen to be
+  a fourth below the final pitch). Whole notes will be used for all notes
+  key should be a key vector indicating the key to use. first-octave should be
+  an integer indicating the octave of the first tonic. last-octave should be an integer
+  indicating the octave of the final tonic. middle-up? should be true if the middle note
+  should be a fifth above the final pitch, otherwise it will be a fourth below it. insert-note should
+  be a note that should be put between the first and middle pitch in the event they are more
+  than a fifth apart. It must follow the rules for triad inserts for bass line secondary structures. It
+  is ignored if the middle note is a fifth or less apart from the first note."
+  [key first-octave last-octave middle-up? insert-note]
+  (let [first-scale (scale key first-octave)
+        last-scale (scale key last-octave)]
+
+    (let [middle-note (if middle-up?
+                        (get last-scale 4)
+                        (get (scale key (dec last-octave)) 4)
+                        )]
+      (if (> (interval-number (interval-keyword middle-note (get first-scale 0))) 5)
+
+        (line
+          (get first-scale 0) 1
+          insert-note 1
+          middle-note 1
+          (get last-scale 0) 1)
+
+        (line
+          (get first-scale 0) 1
+
+          middle-note 1
+
+          (get last-scale 0) 1
+          )))))
 
 
 (defn valid-neighbor-indexes
@@ -116,7 +152,7 @@
   "Returns avector containing the notes
   that would be valid to insert before the note at
   the given index"
-  [target-line key-vector index]
+  [target-line key-vector index upper-line?]
   (let [line-note-before (if (= index 0) (line-note-at target-line index)(line-note-at target-line (dec index)))
         line-note-after (line-note-at target-line index)]
     ;generate the nearest triad pitches
@@ -128,8 +164,8 @@
           (for [i (range (count triad-pitches))]
             ;true for is lowest sounding for the purposes of counterpoint
             (when (and
-                    (consonant? (compound-interval-keyword (get triad-pitches i) (:note line-note-before)) true)
-                    (consonant? (compound-interval-keyword (get triad-pitches i) (:note line-note-after)) true)
+                    (consonant? (compound-interval-keyword (get triad-pitches i) (:note line-note-before)) (not upper-line?))
+                    (consonant? (compound-interval-keyword (get triad-pitches i) (:note line-note-after)) (not upper-line?))
                     (<= (interval-number (interval-keyword (get triad-pitches i) (:note line-note-after))) 8))
               (get triad-pitches i))))))))
 
@@ -137,7 +173,8 @@
   "Returns a map of integers to vectors, where
   each integer represents an index in target-line (of a note), and
   the vector it maps to indicates the ntoes that could be inserted
-  BEFORE that note,, following the rules of westergaardian theory counterpoint.
+  BEFORE that note,, following the rules of westergaardian theory counterpoint
+  for the upper and bass lines.
   target-line is the line to examine and key-vector is the
   kev-vector for the key that the target line is in.
   The rules are:
@@ -145,36 +182,69 @@
   Any triad pitch may precede the first pitch or be inserted between
   two consecutive pitches as long as no dissonant skip and no skip larger than
   an octave is created (and we'll consider a perfect fourth skip in an upper line
-  to be consonant)."
-  [target-line key-vector]
+  to be consonant). upper-line? indicates whether this is true. upper-line being true also means
+  inserts are allowed before the first note, otherwise they aren't"
+  [target-line key-vector upper-line?]
   (apply hash-map
     (filter
       #(not (nil? %))
-      (for [i (range (line-note-count target-line))
+      (for [i (range (if upper-line? 0 1) (line-note-count target-line))
           output-index? [true false]]
-        (let [valid-inserts (valid-triad-inserts-before target-line key-vector i)]
+        (let [valid-inserts (valid-triad-inserts-before target-line key-vector i upper-line?)]
           (when (not-empty valid-inserts)
             (if output-index?
               i
               valid-inserts)))))))
 
+(defn valid-triad-inserts-between
+  "Like valid-triad-inserts, but only returns a single vector that has the valid
+  inserts between the two given notes"
+  [first-note second-note key-vector upper-line?]
+  (valid-triad-inserts-before
+    (line first-note 1 second-note 1)
+    key-vector
+    1
+    upper-line?
+    )
+  )
+
 (defn valid-step-motion-inserts
   "Returns a vector containing the indexes of notes where the
-  following note forms a skip (interval a 3rd or larger) with the indexed note."
-  [target-line]
+  following note forms a skip (interval a 3rd or larger) with the indexed note,
+  and where the number of notes that would be inserted between the two notes
+  in a step motion is <= limit."
+  [target-line limit]
   (vec
     (filter
       #(not (nil? %))
       (for [i (range (dec (line-note-count target-line)))]
-        (when ( > (interval-number (interval-keyword
+        (when (and
+                (<= (interval-number (interval-keyword
+                                       (:note (line-note-at target-line i))
+                                       (:note (line-note-at target-line (inc i))))) (+ 2 limit))
+                ( > (interval-number (interval-keyword
                                  (:note (line-note-at target-line i))
-                                 (:note (line-note-at target-line (inc i))))) 2)
+                                 (:note (line-note-at target-line (inc i))))) 2))
           i)))))
 
-(defn counterpoint-upper-step-motion
+(defn valid-triad-repeats
+  "Returns a vector containing the indexes of notes that
+  are triad pitches of the key, meaning those notes are allowed to be
+  repeated in westergaardian counterpoint."
+  [line key-vector]
+  (vec
+    (filter
+      #(not (nil? %))
+      (for [i (range (line-note-count line))]
+        (when (contains? [1 3 5]
+                        (note-degree key-vector (:note (line-note-at line i))))
+          i
+          )))))
+
+(defn counterpoint-step-motion
   "Returns a step motion line starting on the
   first note and ending on the second (all notes being a whole note),
-  following the rules for upper line step motion:
+  following the rules for upper and bass line step motion (they are the same):
   uses the diatonic degrees except for the special cases
   where it uses the raised sixth or seventh degree in a minor key:
   a) a rising step motion from the fifth degree to the tonic
