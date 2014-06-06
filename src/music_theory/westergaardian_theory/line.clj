@@ -6,7 +6,7 @@
 ;lines are simply represented as vectors containing 'line-notes', where a line note
 ;is a map containing a :note and :dur entry (which have a note keyword and duration fraction, respectively)
 
-(ns music-theory.tonal-theory.line)
+(ns music-theory.westergaardian-theory.line)
 
 (defn line-note
   "Returns a line note given a note and duration.

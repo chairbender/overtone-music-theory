@@ -1,11 +1,11 @@
 ;Functions related to linear operations in tonal theory,
 ;where functions do stuff with tonal theory "lines" (sequences of notes with specific durations)
 
-(ns music-theory.tonal-theory.linear-operation
-  (:use music-theory.tonal-theory.line)
-  (:use music-theory.tonal-theory.interval)
-  (:use music-theory.tonal-theory.key)
-  (:use music-theory.tonal-theory.note))
+(ns music-theory.westergaardian-theory.linear-operation
+  (:use music-theory.westergaardian-theory.line)
+  (:use music-theory.westergaardian-theory.interval)
+  (:use music-theory.westergaardian-theory.key)
+  (:use music-theory.westergaardian-theory.note))
 
 (defn rearticulation
   "given a line and an index,

@@ -2,8 +2,8 @@
 ;Note keywords are of the form :<note-letter><note-alterations><note-octave>,
 ;where note-letter is any letter from a-g or A-G and note alterations is any number of
 ;# or any number of b or nothing, and note-octave any integer (positive or negative)
-(ns music-theory.tonal-theory.note
-  (:use music-theory.tonal-theory.tonal-pitch-class))
+(ns music-theory.westergaardian-theory.note
+  (:use music-theory.westergaardian-theory.tonal-pitch-class))
 
 (defn- normalize-note
   "Converts note keywords to a standard internal representation.

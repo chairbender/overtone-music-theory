@@ -1,6 +1,6 @@
-(ns music-theory.tonal-theory.t-key
+(ns music-theory.westergaardian-theory.t-key
   (:use midje.sweet)
-  (:use music-theory.tonal-theory.key))
+  (:use music-theory.westergaardian-theory.key))
 
 
 (facts "about `key-tonal-pitch-classes`"

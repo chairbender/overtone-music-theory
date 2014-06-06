@@ -1,11 +1,11 @@
 ;functions involving the notes and tonal pitch classes of a given key/scale
 
-(ns music-theory.tonal-theory.key
-  (:use music-theory.tonal-theory.diatonic-collection)
-  (:use music-theory.tonal-theory.note)
-  (:use music-theory.tonal-theory.tonal-pitch-class)
-  (:use music-theory.tonal-theory.interval)
-  (:use music-theory.tonal-theory.tonal-utility))
+(ns music-theory.westergaardian-theory.key
+  (:use music-theory.westergaardian-theory.diatonic-collection)
+  (:use music-theory.westergaardian-theory.note)
+  (:use music-theory.westergaardian-theory.tonal-pitch-class)
+  (:use music-theory.westergaardian-theory.interval)
+  (:use music-theory.westergaardian-theory.tonal-utility))
 
 (defn- rotate-key-vector
   "rotates the vector forward by the given offset, for example, if the vector is

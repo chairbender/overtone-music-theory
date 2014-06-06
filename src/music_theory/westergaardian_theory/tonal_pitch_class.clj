@@ -5,7 +5,7 @@
 ;unlike with standard pitch classes.
 
 
-(ns music-theory.tonal-theory.tonal-pitch-class
+(ns music-theory.westergaardian-theory.tonal-pitch-class
   (:use clojure.set))
 
 

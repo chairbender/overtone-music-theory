@@ -1,13 +1,13 @@
 ;functions for doing counterpoint using tonal theory methods
 
-(ns music-theory.tonal-theory.algorithmic-composition.counterpoint
-  (:use music-theory.tonal-theory.line)
-  (:use music-theory.tonal-theory.interval)
-  (:use music-theory.tonal-theory.key)
-  (:use music-theory.tonal-theory.note)
-  (:use music-theory.tonal-theory.tonal-pitch-class)
-  (:use music-theory.tonal-theory.linear-operation)
-  (:use music-theory.tonal-theory.tonal-utility)
+(ns music-theory.westergaardian-theory.algorithmic-composition.counterpoint
+  (:use music-theory.westergaardian-theory.line)
+  (:use music-theory.westergaardian-theory.interval)
+  (:use music-theory.westergaardian-theory.key)
+  (:use music-theory.westergaardian-theory.note)
+  (:use music-theory.westergaardian-theory.tonal-pitch-class)
+  (:use music-theory.westergaardian-theory.linear-operation)
+  (:use music-theory.westergaardian-theory.tonal-utility)
   (:use music-theory.utility))
 
 (defn- full-diatonic-step-motion
@@ -77,6 +77,13 @@
                         (interval-above (get scale 0) :P8))
             ending-note (get scale 0)]
         (full-diatonic-step-motion key-vector starting-note ending-note))))
+
+;(defn basic-arpeggiation
+;  "Generates a basic arpeggiation for the bass line, using the operation rules
+;  of Tonal Theory. Final and first pitch must be tonics. The middle pitch must be
+;  a fifth above or fourth below the final tonic. If the middle pitch is more than
+;  a fifth from the first pitch, a triad pitch must be inserted between the middle pitch and first pitch.
+;  The rules of tonal theory are unspecified ")
 
 
 (defn valid-neighbor-indexes

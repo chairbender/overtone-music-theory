@@ -1,6 +1,6 @@
-(ns music-theory.tonal-theory.t-interval
+(ns music-theory.westergaardian-theory.t-interval
   (:use midje.sweet)
-  (:use [music-theory.tonal-theory.interval]))
+  (:use [music-theory.westergaardian-theory.interval]))
 
 (facts "about `interval-keyword`"
        (fact "For all intervals it returns a keyword indicating

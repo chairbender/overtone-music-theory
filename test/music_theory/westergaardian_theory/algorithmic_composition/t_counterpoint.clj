@@ -1,8 +1,8 @@
-(ns music-theory.tonal-theory.algorithmic-composition.t-counterpoint
+(ns music-theory.westergaardian-theory.algorithmic-composition.t-counterpoint
   (:use midje.sweet)
-  (:use music-theory.tonal-theory.algorithmic-composition.counterpoint)
-  (:use music-theory.tonal-theory.line)
-  (:use music-theory.tonal-theory.key))
+  (:use music-theory.westergaardian-theory.algorithmic-composition.counterpoint)
+  (:use music-theory.westergaardian-theory.line)
+  (:use music-theory.westergaardian-theory.key))
 
 (facts "about `diatonic-step-motion`"
        (fact "returns a diatonic step motion line of whole notes

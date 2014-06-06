@@ -3,16 +3,16 @@
 ;any of the allowed options
 
 
-(ns music-theory.tonal-theory.algorithmic-composition.random-counterpoint
-  (:use music-theory.tonal-theory.line)
-  (:use music-theory.tonal-theory.interval)
-  (:use music-theory.tonal-theory.key)
-  (:use music-theory.tonal-theory.note)
-  (:use music-theory.tonal-theory.tonal-pitch-class)
-  (:use music-theory.tonal-theory.linear-operation)
-  (:use music-theory.tonal-theory.tonal-utility)
+(ns music-theory.westergaardian-theory.algorithmic-composition.random-counterpoint
+  (:use music-theory.westergaardian-theory.line)
+  (:use music-theory.westergaardian-theory.interval)
+  (:use music-theory.westergaardian-theory.key)
+  (:use music-theory.westergaardian-theory.note)
+  (:use music-theory.westergaardian-theory.tonal-pitch-class)
+  (:use music-theory.westergaardian-theory.linear-operation)
+  (:use music-theory.westergaardian-theory.tonal-utility)
   (:use music-theory.utility)
-  (:use music-theory.tonal-theory.algorithmic-composition.counterpoint))
+  (:use music-theory.westergaardian-theory.algorithmic-composition.counterpoint))
 
 (defn random-neighbor
   "Given a line, performs a random neighbor operation on

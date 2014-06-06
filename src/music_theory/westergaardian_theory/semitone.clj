@@ -1,5 +1,5 @@
 ;Operations involving semitones
-(ns music-theory.tonal-theory.semitone
+(ns music-theory.westergaardian-theory.semitone
 	(:require [clojure.math.numeric-tower :as math]))
 
 (defn semitones->midi

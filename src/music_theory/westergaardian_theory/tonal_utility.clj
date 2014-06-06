@@ -1,5 +1,5 @@
-(ns music-theory.tonal-theory.tonal-utility
-  (:use music-theory.tonal-theory.interval))
+(ns music-theory.westergaardian-theory.tonal-utility
+  (:use music-theory.westergaardian-theory.interval))
 
 
 (defn note-letter-difference

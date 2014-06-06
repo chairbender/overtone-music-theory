@@ -4,9 +4,9 @@
 ;there can also be any number of a's or d's to indicate things like doubly
 ;or triply augmented/diminished intervals. number is any integer
 ;greater than or equal to 1.
-(ns music-theory.tonal-theory.interval
-  (:use music-theory.tonal-theory.note)
-  (:use music-theory.tonal-theory.tonal-pitch-class)
+(ns music-theory.westergaardian-theory.interval
+  (:use music-theory.westergaardian-theory.note)
+  (:use music-theory.westergaardian-theory.tonal-pitch-class)
   (:use music-theory.utility))
 
 (defn- interval-quality-unchecked
