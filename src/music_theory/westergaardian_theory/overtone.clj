@@ -37,9 +37,10 @@
   (play-line-recurse target-line beat-number metro play-midi-note 0))
 
 (defn play-midi-ugen
-  "For use with play-line. Given a ugen that uses midi notes to tell it what pitch to play,
+  "For use with play-line. Given a ugen that uses midi notes to tell it what pitch to play as
+  the first argument,
   returns a function that will cause that instrument to play
-  when passed a midi note as the first argument. Passes args as the remaining arguments to the instrument"
+  when passed a midi note. Passes args as the remaining arguments to the instrument"
   [instrument & args]
   (fn
     [midi-note]
@@ -47,8 +48,8 @@
 
 (defn play-freq-ugen
   "For use with play-line. Given a ugen that uses a frequency value to
-  tell it what pitch to play, returns a function that will
-  cause it to play a passed midi note as the first argument.
+  tell it what pitch to play as its first argument, returns a function that will
+  cause it to play a passed midi note.
   Passes args as the remaining arguments to the instrument."
   [instrument & args]
   (fn

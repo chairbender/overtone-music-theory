@@ -281,3 +281,23 @@
 
       :else
       diatonic-motion)))
+
+(defn valid-other-upper-ending-note
+  "Given a starting note and a key, returns a vector containing
+  notes that would be valid to be an ending note for a non-primary secondary line,
+  according to the following rules; may be any triad pitch no more than an octave from the first"
+  [key-vector first-note]
+  (let [first-degree (note-degree key-vector first-note)]
+    (cond
+      (= 1 first-degree)
+      (vec (map #(note-at-scale-index key-vector (+ (scale-index key-vector first-note) %)) [0 2 4 7 -3 -5 -7]))
+
+      (= 3 first-degree)
+      (vec (map #(note-at-scale-index key-vector (+ (scale-index key-vector first-note) %)) [0 2 5 7 -2 -5 -7]))
+
+      (= 5 first-degree)
+      (vec (map #(note-at-scale-index key-vector (+ (scale-index key-vector first-note) %)) [0 3 5 7 -2 -4 -7]))
+
+      )
+    )
+  )

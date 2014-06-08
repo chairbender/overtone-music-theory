@@ -144,11 +144,14 @@ any of the allowed options"
   "Randomly repeats a triad note in the line, always using a whole note
   for the new note."
   [key-vector target-line]
-  (let [chosen-index (rand-nth (valid-triad-repeats target-line key-vector))]
-    (let [chosen-note (:note (line-note-at target-line chosen-index))]
-      (insert-line target-line
-                   (line chosen-note 1)
-                   chosen-index))))
+  (if (not-empty (valid-triad-repeats target-line key-vector))
+    (let [chosen-index (rand-nth (valid-triad-repeats target-line key-vector))]
+      (let [chosen-note (:note (line-note-at target-line chosen-index))]
+        (insert-line target-line
+                     (line chosen-note 1)
+                     chosen-index)))
+    target-line
+    ))
 
 (defn random-upper-line
   "Generates a random upper line in the given key at the given
@@ -168,4 +171,83 @@ any of the allowed options"
             (recur (random-step-motion-insert key-vector result-line (- length (line-note-count starting-line))))
             (recur (chosen-function key-vector result-line))
             ))))))
+
+(defn random-lower-line
+  "Like random upper line but generates a bass line"
+  [key-vector octave length]
+  (let [starting-line (random-basic-arpeggiation key-vector octave)]
+    (loop [result-line starting-line]
+      (if (>= (line-note-count result-line) length)
+        result-line
+        (let [chosen-function (rand-nth [random-triad-repeat,
+                                         random-neighbor,
+                                         random-bass-triad-insert,
+                                         random-step-motion-insert] )]
+          (if (= chosen-function random-step-motion-insert)
+            (recur (random-step-motion-insert key-vector result-line (- length (line-note-count starting-line))))
+            (recur (chosen-function key-vector result-line))
+            ))))))
+
+(defn random-other-upper-basic-structure
+  "Creates a random starting basic structure for a non-primary
+  upper line. Rules are - the final pitch must be a tonic triad member and the first pitch
+  must be a tonic triad member no more than an octave from the final pitch.
+  first-octave is the octave to use for the first note"
+  [key-vector first-octave]
+  (let [chosen-first-degree (rand-nth [1 3 5])]
+    (let [chosen-first-note (get (ascale key-vector first-octave) (dec chosen-first-degree))]
+      (let [chosen-second-note (rand-nth (valid-other-upper-ending-note key-vector chosen-first-note))]
+        (let
+            [result-line (line chosen-first-note 1 chosen-second-note 1)]
+            (if (rand-bool)
+              (if (= chosen-first-note chosen-second-note)
+                (random-neighbor key-vector result-line)
+                (random-step-motion-insert key-vector result-line 99)
+                )
+              result-line))
+        )
+      )
+    )
+  )
+
+(defn random-other-upper-line
+  "Like random-upper-line, but generates an additional upper line
+  other than the primary line, with only slightly different rules according
+  to westergaardian theory."
+  [key-vector octave length]
+  (let [starting-line (random-other-upper-basic-structure key-vector octave)]
+    (loop [result-line starting-line]
+      (if (>= (line-note-count result-line) length)
+        result-line
+        (let [chosen-function (rand-nth [random-triad-repeat,
+                                         random-neighbor,
+                                         random-upper-triad-insert,
+                                         random-step-motion-insert] )]
+          (if (= chosen-function random-step-motion-insert)
+            (recur (random-step-motion-insert key-vector result-line (- length (line-note-count starting-line))))
+            (recur (chosen-function key-vector result-line))
+            ))))))
+
+(defn random-counterpoint-lines
+  "Returns a vector containing n counterpoint lines of note length length, where the first two
+  are the upper line, then the bass, then additional upper lines. Uses the given key-vector for
+  the key. The octave of each of the lines is chosen using the octaves parameter, which should be
+  a vector of integers where each integer represents the starting note's octave for each corresponding
+  line (the first one being the upper, the second the bass, and the remaining the other upper lines).
+  octaves should have n elements.
+  "
+  [n length key-vector octaves]
+  (vec
+    (for [i (range n)]
+      (cond
+        (= i 0)
+        (random-upper-line key-vector (get octaves i) length)
+
+        (= i 1)
+        (random-lower-line key-vector (get octaves i) length)
+
+        :else
+        (random-other-upper-line key-vector (get octaves i) length)
+
+        ))))
 
