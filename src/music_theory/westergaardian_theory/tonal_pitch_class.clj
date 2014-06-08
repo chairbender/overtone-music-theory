@@ -1,11 +1,14 @@
-;Stuff involving tonal pitch classes.
-;Tonal Pitch classes are represented by tonal pitch class keywords of the form :<naturalnote><alterations>,
-;where naturalnote is a-g or A-G and alterations is either any number of flats (b) or any number of sharps (#)
-;We use the word "tonal" to describe these pitch classes to indicate that enharmonic equivalence is not assumed,
-;unlike with standard pitch classes.
 
 
-(ns music-theory.westergaardian-theory.tonal-pitch-class
+
+(ns
+    ^{:doc "Stuff involving tonal pitch classes.
+Tonal Pitch classes are represented by tonal pitch class keywords of the form :<naturalnote><alterations>,
+where naturalnote is a-g or A-G and alterations is either any number of flats (b) or any number of sharps (#)
+We use the word tonal to describe these pitch classes to indicate that enharmonic equivalence is not assumed,
+unlike with standard pitch classes."
+       :author "Kyle Hipke"}
+    music-theory.westergaardian-theory.tonal-pitch-class
   (:use clojure.set))
 
 

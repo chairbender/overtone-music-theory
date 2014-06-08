@@ -1,9 +1,12 @@
 
-;functions for generating counterpoint lines by randomly performing
-;any of the allowed options
 
 
-(ns music-theory.westergaardian-theory.algorithmic-composition.random-counterpoint
+
+(ns
+    ^{:doc "functions for generating counterpoint lines by randomly performing
+any of the allowed options"
+       :author "Kyle Hipke"}
+    music-theory.westergaardian-theory.algorithmic-composition.random-counterpoint
   (:use music-theory.westergaardian-theory.line)
   (:use music-theory.westergaardian-theory.interval)
   (:use music-theory.westergaardian-theory.key)
@@ -121,12 +124,12 @@
   [key-vector first-octave]
   (let [chosen-last-octave (+ first-octave (rand-nth [-1 0 1]))
         chosen-middle-up? (rand-bool)]
-    (let [first-scale (scale key-vector first-octave)
-          last-scale (scale key-vector chosen-last-octave)]
+    (let [first-scale (ascale key-vector first-octave)
+          last-scale (ascale key-vector chosen-last-octave)]
       (let [first-note (get first-scale 0)
              middle-note (if chosen-middle-up?
                           (get last-scale 4)
-                          (get (scale key-vector (dec chosen-last-octave)) 4)
+                          (get (ascale key-vector (dec chosen-last-octave)) 4)
                           )]
         ;check if the middle note will be more than a fifth from
         ;the first

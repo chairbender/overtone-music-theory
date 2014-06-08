@@ -1,10 +1,13 @@
-;Operations involving semitones
-(ns music-theory.westergaardian-theory.semitone
+
+(ns
+    ^{:doc "Operations involving semitones"
+      :author "Kyle Hipke"}
+    music-theory.westergaardian-theory.semitone
 	(:require [clojure.math.numeric-tower :as math]))
 
 (defn semitones->midi
   "Converts a value representing the number of semitones from C-1 to a midi note value."
   [semitones]
-  (if (contains? #{0 1 2} (mod semitones 12))
-    (+ semitones 9)
-    (- semitones 3)))
+  (if (contains? #{11 10 9} (mod semitones 12))
+    (+ semitones 12)
+    semitones))

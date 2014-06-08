@@ -1,7 +1,10 @@
-;Functions related to linear operations in tonal theory,
-;where functions do stuff with tonal theory "lines" (sequences of notes with specific durations)
 
-(ns music-theory.westergaardian-theory.linear-operation
+(ns
+    ^{:doc "Functions related to linear operations in tonal theory,
+where functions do stuff with tonal theory lines (sequences of notes with specific durations)
+"
+       :author "Kyle Hipke"}
+    music-theory.westergaardian-theory.linear-operation
   (:use music-theory.westergaardian-theory.line)
   (:use music-theory.westergaardian-theory.interval)
   (:use music-theory.westergaardian-theory.key)

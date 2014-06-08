@@ -7,4 +7,5 @@
   :source-paths ["src"]
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/math.numeric-tower "0.0.4"]
-                 [midje "1.5.1"]])
+                 [midje "1.5.1"]
+                 [overtone "0.9.1"]])

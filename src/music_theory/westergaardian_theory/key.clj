@@ -1,6 +1,9 @@
-;functions involving the notes and tonal pitch classes of a given key/scale
 
-(ns music-theory.westergaardian-theory.key
+
+(ns
+    ^{:doc "functions involving the notes and tonal pitch classes of a given key/scale"
+       :author "Kyle Hipke"}
+    music-theory.westergaardian-theory.key
   (:use music-theory.westergaardian-theory.diatonic-collection)
   (:use music-theory.westergaardian-theory.note)
   (:use music-theory.westergaardian-theory.tonal-pitch-class)
@@ -59,7 +62,7 @@
   [key-vector note]
   (inc (.indexOf key-vector (tonal-pitch-class-from-note note))))
 
-(defn scale
+(defn ascale
   "Given a key vector and starting octave,
   returns a vector of 7 notes representing the single-octave scale of the
   key, starting at the given octave and ending at degree VII."
@@ -84,7 +87,7 @@
   1, 2, 3, and so on at II0 III0 IV0. -1, -2, and so on
   corresponds to VII-1, VI-1 and so on."
   [key-vector note]
-  (note-letter-difference note (get (scale key-vector 0) 0) ))
+  (note-letter-difference note (get (ascale key-vector 0) 0) ))
 
 (defn note-at-scale-index
   "Given a key-vector and scale index, returns the
@@ -92,7 +95,7 @@
   [key-vector index]
 
   (get
-    (scale key-vector (if (>= index 0) (quot index 7) (dec (quot index 7))))
+    (ascale key-vector (if (>= index 0) (quot index 7) (dec (quot index 7))))
     (mod index 7))
 
   )

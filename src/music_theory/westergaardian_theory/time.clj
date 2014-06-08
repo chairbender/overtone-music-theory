@@ -1,8 +1,11 @@
-;Functionality for handling time and duration in the
-;context of music
-;Duration symbols are represented as
 
-(ns music-theory.westergaardian-theory.time)
+
+(ns
+    ^{:doc "Functionality for handling time and duration in the
+context of music
+Duration symbols are represented as"
+       :author "Kyle Hipke"}
+    music-theory.westergaardian-theory.time)
 
 
 

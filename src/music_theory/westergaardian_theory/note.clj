@@ -1,9 +1,14 @@
-;operations on notes (tonal-pitch-class with an octave)
-;Note keywords are of the form :<note-letter><note-alterations><note-octave>,
-;where note-letter is any letter from a-g or A-G and note alterations is any number of
-;# or any number of b or nothing, and note-octave any integer (positive or negative)
-(ns music-theory.westergaardian-theory.note
-  (:use music-theory.westergaardian-theory.tonal-pitch-class))
+(ns
+    ^{:doc "operations on notes (tonal-pitch-class with an octave).
+Note keywords are of the form :<note-letter><note-alterations><note-octave>,
+where note-letter is any letter from a-g or A-G and note alterations is any number of
+# or any number of b or nothing, and note-octave any integer (positive or negative)"
+      :author "Kyle Hipke"}
+
+    music-theory.westergaardian-theory.note
+  (:use music-theory.westergaardian-theory.tonal-pitch-class)
+  (:use music-theory.westergaardian-theory.semitone)
+  (:use overtone.core))
 
 (defn- normalize-note
   "Converts note keywords to a standard internal representation.
@@ -54,7 +59,7 @@
      (tonal-pitch-class-semitone-distance :C (note-tonal-pitch-class normal-note))
      )))
 
-(defn note
+(defn anote
   "Creates a note given a note letter (string), alterations (string), and
   integer octave."
   [letter alterations octave]
@@ -63,7 +68,7 @@
 (defn note-from-tonal-pitch-class
   "Creates a note from a tonal pitch class, given an octave"
   [tonal-pitch-class octave]
-  (note (tonal-pitch-class-letter tonal-pitch-class)
+  (anote (tonal-pitch-class-letter tonal-pitch-class)
         (tonal-pitch-class-alterations tonal-pitch-class)
         octave)
   )
@@ -105,3 +110,8 @@
 
         :else
         (note-from-tonal-pitch-class (flattify tpc 1) (note-octave normal-note))))))
+
+(defn note-hz
+  "Returns the frequency of the pitch that the note represents"
+  [note]
+  (midi->hz (semitones->midi (note-semitones note))))

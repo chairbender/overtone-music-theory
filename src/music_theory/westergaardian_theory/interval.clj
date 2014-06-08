@@ -1,10 +1,14 @@
-;For dealing with intervals
-;The interval keyword naming convention is as follows :<quality><number>,
-;where quality is a (augmented) d (diminished) m (minor), P (perfect) or M (major).
-;there can also be any number of a's or d's to indicate things like doubly
-;or triply augmented/diminished intervals. number is any integer
-;greater than or equal to 1.
-(ns music-theory.westergaardian-theory.interval
+
+(ns ^{:doc "For dealing with intervals
+The interval keyword naming convention is as follows :<quality><number>,
+where quality is a (augmented) d (diminished) m (minor), P (perfect) or M (major).
+there can also be any number of a's or d's to indicate things like doubly
+or triply augmented/diminished intervals. number is any integer
+greater than or equal to 1."
+       :author "Kyle Hipke"}
+
+
+    music-theory.westergaardian-theory.interval
   (:use music-theory.westergaardian-theory.note)
   (:use music-theory.westergaardian-theory.tonal-pitch-class)
   (:use music-theory.utility))
@@ -369,8 +373,8 @@
     [octaves (quot (interval-number interval) 8)
      next-tonal-pitch-class (line-of-fifths-tonal-pitch-class (note-tonal-pitch-class bottom-note) (line-of-fifths-interval-index interval))]
     (if (> (int (note-letter bottom-note)) (int (note-letter next-tonal-pitch-class)))
-      (note (tonal-pitch-class-letter next-tonal-pitch-class) (tonal-pitch-class-alterations next-tonal-pitch-class) (+ (note-octave bottom-note) octaves 1))
-      (note (tonal-pitch-class-letter next-tonal-pitch-class) (tonal-pitch-class-alterations next-tonal-pitch-class) (+ (note-octave bottom-note) octaves))
+      (anote (tonal-pitch-class-letter next-tonal-pitch-class) (tonal-pitch-class-alterations next-tonal-pitch-class) (+ (note-octave bottom-note) octaves 1))
+      (anote (tonal-pitch-class-letter next-tonal-pitch-class) (tonal-pitch-class-alterations next-tonal-pitch-class) (+ (note-octave bottom-note) octaves))
       ))
     interval))
 
@@ -383,8 +387,8 @@
       [octaves (quot (interval-number interval) 8)
        bottom-tonal-pitch-class (line-of-fifths-center interval (note-tonal-pitch-class top-note))]
       (if (> (int (note-letter bottom-tonal-pitch-class)) (int (note-letter top-note)))
-        (note (tonal-pitch-class-letter bottom-tonal-pitch-class) (tonal-pitch-class-alterations bottom-tonal-pitch-class) (- (note-octave top-note) octaves 1))
-        (note (tonal-pitch-class-letter bottom-tonal-pitch-class) (tonal-pitch-class-alterations bottom-tonal-pitch-class) (- (note-octave top-note) octaves))
+        (anote (tonal-pitch-class-letter bottom-tonal-pitch-class) (tonal-pitch-class-alterations bottom-tonal-pitch-class) (- (note-octave top-note) octaves 1))
+        (anote (tonal-pitch-class-letter bottom-tonal-pitch-class) (tonal-pitch-class-alterations bottom-tonal-pitch-class) (- (note-octave top-note) octaves))
         ))
 
     interval

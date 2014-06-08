@@ -1,6 +1,7 @@
-;functions for doing counterpoint using westergaardian theory
-
-(ns music-theory.westergaardian-theory.algorithmic-composition.counterpoint
+(ns
+    ^{:doc "functions for doing counterpoint using westergaardian theory"
+       :author "Kyle Hipke"}
+    music-theory.westergaardian-theory.algorithmic-composition.counterpoint
   (:use music-theory.westergaardian-theory.line)
   (:use music-theory.westergaardian-theory.interval)
   (:use music-theory.westergaardian-theory.key)
@@ -64,7 +65,7 @@
   to play the ending tonic on. first-note-interval-number
   is either 3, 5, or 8 (representing the first note being a major or minor 3rd (based on the key being major or minor), perfect fifth, or perfect octave above the tonic)."
   [key-vector octave first-note-interval-number]
-  (let [scale (scale key-vector octave)]
+  (let [scale (ascale key-vector octave)]
 
       (let [starting-note (cond
                         (= first-note-interval-number 3)
@@ -98,12 +99,12 @@
   than a fifth apart. It must follow the rules for triad inserts for bass line secondary structures. It
   is ignored if the middle note is a fifth or less apart from the first note."
   [key first-octave last-octave middle-up? insert-note]
-  (let [first-scale (scale key first-octave)
-        last-scale (scale key last-octave)]
+  (let [first-scale (ascale key first-octave)
+        last-scale (ascale key last-octave)]
 
     (let [middle-note (if middle-up?
                         (get last-scale 4)
-                        (get (scale key (dec last-octave)) 4)
+                        (get (ascale key (dec last-octave)) 4)
                         )]
       (if (> (interval-number (interval-keyword middle-note (get first-scale 0))) 5)
 

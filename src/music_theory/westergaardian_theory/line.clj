@@ -1,12 +1,15 @@
-;Functions for dealing with the concept of a "line" in westergaardian theory.
-;a line is a sequence of notes, each with their own duration. There
-;are no chords in a line, chords are formed as the result of simultaneously
-;sounding notes in simultaneously sounding lines.
 
-;lines are simply represented as vectors containing 'line-notes', where a line note
-;is a map containing a :note and :dur entry (which have a note keyword and duration fraction, respectively)
+(ns
+    ^{:doc "Functions for dealing with the concept of a 'line' in westergaardian theory.
+a line is a sequence of notes, each with their own duration. There
+are no chords in a line, chords are formed as the result of simultaneously
+sounding notes in simultaneously sounding lines.
 
-(ns music-theory.westergaardian-theory.line)
+lines are simply represented as vectors containing 'line-notes', where a line note
+is a map containing a :note and :dur entry (which have a note keyword and duration fraction, respectively)
+"
+       :author "Kyle Hipke"}
+    music-theory.westergaardian-theory.line)
 
 (defn line-note
   "Returns a line note given a note and duration.

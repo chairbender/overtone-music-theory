@@ -1,6 +1,9 @@
-;Handles stuff involving key signatures -more focusing on the accidentals in the signature than the notes
-;in the signatures. see key.clj for stuff that's more focused on the notes and modes and things like that
-(ns music-theory.westergaardian-theory.key-signature
+
+(ns
+    ^{:doc "Handles stuff involving key signatures -more focusing on the accidentals in the signature than the notes
+in the signatures. see key.clj for stuff that's more focused on the notes and modes and things like that"
+       :author "Kyle Hipke"}
+    music-theory.westergaardian-theory.key-signature
 	(:use music-theory.westergaardian-theory.tonal-pitch-class))
 
 (def ^{:private true} circle-of-flats [:B :E :A :D :G :C :F])

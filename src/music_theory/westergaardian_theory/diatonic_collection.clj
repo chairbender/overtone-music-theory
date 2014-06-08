@@ -1,17 +1,21 @@
-;Operations on "diatonic collections", which are simply collections
-;of seven pitch classes starting on a given pitch class with this pattern of intervals/steps
-;from the root note: whole whole half whole whole whole half (where whole and half mean
-;a major and a minor second interval, respectively). A diatonic collection starting on some
-;note has the same pitches as a major scale starting on that note.
-;
-;However, due to the way that Overtone treats scales, we can't just
-;use the scale function to represent the concept of a diatonic collection.
-;Given a midi note with two possible pitch classes (like D# and Eb),
-;overtone always picks the same pitch class when calling note-info on that note.
-;But, if we are following westergaardian theory, the choice of which tonal-pitch-class a given
-;pitch should be referred to by is based on the diatonic collection described by the key signature
-;that the pitch is being played in.
-(ns music-theory.westergaardian-theory.diatonic-collection
+
+(ns
+    ^{:doc "Operations on diatonic collections, which are simply collections
+of seven pitch classes starting on a given pitch class with this pattern of intervals/steps
+from the root note: whole whole half whole whole whole half (where whole and half mean
+a major and a minor second interval, respectively). A diatonic collection starting on some
+note has the same pitches as a major scale starting on that note.
+
+However, due to the way that Overtone treats scales, we can't just
+use the scale function to represent the concept of a diatonic collection.
+Given a midi note with two possible pitch classes (like D# and Eb),
+overtone always picks the same pitch class when calling note-info on that note.
+But, if we are following westergaardian theory, the choice of which tonal-pitch-class a given
+pitch should be referred to by is based on the diatonic collection described by the key signature
+that the pitch is being played in."
+       :author "Kyle Hipke"}
+
+    music-theory.westergaardian-theory.diatonic-collection
   (:use music-theory.westergaardian-theory.tonal-pitch-class)
   (:use music-theory.westergaardian-theory.key-signature))
 
