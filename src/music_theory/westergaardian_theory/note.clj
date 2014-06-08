@@ -115,3 +115,9 @@ where note-letter is any letter from a-g or A-G and note alterations is any numb
   "Returns the frequency of the pitch that the note represents"
   [note]
   (midi->hz (semitones->midi (note-semitones note))))
+
+(defn note-midi
+  "Returns the midi value this note represents"
+  [note]
+  (semitones->midi (note-semitones note))
+  )
